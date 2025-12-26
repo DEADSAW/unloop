@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unloop - Discovery Mode</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">∞</div>
+        <div class="logo-text">
+          <h1>Unloop</h1>
+          <span class="tagline">Discovery Mode</span>
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="mainToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </header>
+
+    <!-- Status Banner -->
+    <div class="status-banner" id="statusBanner">
+      <span class="status-icon">🎵</span>
+      <span class="status-text" id="statusText">Discovery Mode Active</span>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="songsListened">0</div>
+        <div class="stat-label">Songs Discovered</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-value" id="skipsCount">0</div>
+        <div class="stat-label">Repeats Blocked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="freshnessScore">100%</div>
+        <div class="stat-label">Freshness</div>
+      </div>
+    </div>
+
+    <!-- Mode Selection -->
+    <section class="section">
+      <h2 class="section-title">
+        <span class="section-icon">🧠</span>
+        Discovery Mode
+      </h2>
+      <div class="mode-selector">
+        <label class="mode-option">
+          <input type="radio" name="mode" value="strict" checked>
+          <div class="mode-content">
+            <div class="mode-name">Strict</div>
+            <div class="mode-desc">Never play the same song twice</div>
+          </div>
+        </label>
+        
+        <label class="mode-option">
+          <input type="radio" name="mode" value="memory-fade">
+          <div class="mode-content">
+            <div class="mode-name">Memory Fade</div>
+            <div class="mode-desc">Allow repeats after some time</div>
+          </div>
+        </label>
+        
+        <label class="mode-option">
+          <input type="radio" name="mode" value="semi-strict">
+          <div class="mode-content">
+            <div class="mode-name">Semi-Strict</div>
+            <div class="mode-desc">Allow after X new songs</div>
+          </div>
+        </label>
+        
+        <label class="mode-option">
+          <input type="radio" name="mode" value="artist-smart">
+          <div class="mode-content">
+            <div class="mode-name">Artist Smart</div>
+            <div class="mode-desc">Limit same artist per session</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <!-- Mode Settings (conditional) -->
+    <section class="section settings-panel" id="memoryFadeSettings" style="display: none;">
+      <h3 class="settings-title">Memory Duration</h3>
+      <div class="slider-container">
+        <input type="range" id="memoryFadeDays" min="7" max="365" value="180" class="range-slider">
+        <div class="slider-labels">
+          <span>1 week</span>
+          <span id="memoryFadeValue">6 months</span>
+          <span>1 year</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section settings-panel" id="semiStrictSettings" style="display: none;">
+      <h3 class="settings-title">Songs Before Repeat</h3>
+      <div class="slider-container">
+        <input type="range" id="songsBeforeRepeat" min="1" max="20" value="5" class="range-slider">
+        <div class="slider-labels">
+          <span>1</span>
+          <span id="songsBeforeRepeatValue">5 songs</span>
+          <span>20</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section settings-panel" id="artistSmartSettings" style="display: none;">
+      <h3 class="settings-title">Max Artist Songs Per Session</h3>
+      <div class="slider-container">
+        <input type="range" id="maxArtistPerSession" min="1" max="10" value="3" class="range-slider">
+        <div class="slider-labels">
+          <span>1</span>
+          <span id="maxArtistPerSessionValue">3 songs</span>
+          <span>10</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <section class="section">
+      <h2 class="section-title">
+        <span class="section-icon">⚡</span>
+        Actions
+      </h2>
+      <div class="action-buttons">
+        <button class="btn btn-secondary" id="exportBtn">
+          <span class="btn-icon">📤</span>
+          Export
+        </button>
+        <button class="btn btn-secondary" id="importBtn">
+          <span class="btn-icon">📥</span>
+          Import
+        </button>
+        <button class="btn btn-danger" id="clearBtn">
+          <span class="btn-icon">🗑️</span>
+          Clear History
+        </button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display: none;">
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-text">
+        <span id="historyCount">0</span> songs in memory
+      </div>
+      <div class="footer-version">v1.0.0</div>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span class="toast-message" id="toastMessage"></span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

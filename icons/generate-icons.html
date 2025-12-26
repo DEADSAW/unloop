@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Unloop Icons</title>
+</head>
+<body>
+  <h1>Icon Generator</h1>
+  <p>Right-click each image and "Save image as" with the corresponding filename:</p>
+  
+  <h3>icon16.png</h3>
+  <canvas id="c16" width="16" height="16"></canvas>
+  
+  <h3>icon32.png</h3>
+  <canvas id="c32" width="32" height="32"></canvas>
+  
+  <h3>icon48.png</h3>
+  <canvas id="c48" width="48" height="48"></canvas>
+  
+  <h3>icon128.png</h3>
+  <canvas id="c128" width="128" height="128"></canvas>
+
+  <script>
+    function drawIcon(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      
+      // Gradient background
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#6366f1');
+      gradient.addColorStop(1, '#a855f7');
+      
+      // Rounded rectangle
+      const radius = size * 0.15;
+      ctx.beginPath();
+      ctx.moveTo(radius, 0);
+      ctx.lineTo(size - radius, 0);
+      ctx.quadraticCurveTo(size, 0, size, radius);
+      ctx.lineTo(size, size - radius);
+      ctx.quadraticCurveTo(size, size, size - radius, size);
+      ctx.lineTo(radius, size);
+      ctx.quadraticCurveTo(0, size, 0, size - radius);
+      ctx.lineTo(0, radius);
+      ctx.quadraticCurveTo(0, 0, radius, 0);
+      ctx.closePath();
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      // Infinity symbol
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${size * 0.55}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('∞', size / 2, size / 2 + size * 0.05);
+    }
+    
+    drawIcon('c16', 16);
+    drawIcon('c32', 32);
+    drawIcon('c48', 48);
+    drawIcon('c128', 128);
+    
+    // Auto-download functionality
+    function downloadPNG(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    // Add download buttons
+    document.body.innerHTML += `
+      <hr>
+      <h2>Quick Download All</h2>
+      <button onclick="downloadPNG('c16', 'icon16.png')">Download 16x16</button>
+      <button onclick="downloadPNG('c32', 'icon32.png')">Download 32x32</button>
+      <button onclick="downloadPNG('c48', 'icon48.png')">Download 48x48</button>
+      <button onclick="downloadPNG('c128', 'icon128.png')">Download 128x128</button>
+      <button onclick="downloadAll()">Download All</button>
+    `;
+    
+    function downloadAll() {
+      downloadPNG('c16', 'icon16.png');
+      setTimeout(() => downloadPNG('c32', 'icon32.png'), 100);
+      setTimeout(() => downloadPNG('c48', 'icon48.png'), 200);
+      setTimeout(() => downloadPNG('c128', 'icon128.png'), 300);
+    }
+  </script>
+</body>
+</html>
