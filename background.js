@@ -4,8 +4,10 @@
  */
 
 // ═══════════════════════════════════════════════════════════════
-// DEFAULT SETTINGS
+// DATABASE VERSION & DEFAULTS
 // ═══════════════════════════════════════════════════════════════
+
+const CURRENT_DB_VERSION = 2;
 
 const DEFAULT_SETTINGS = {
   mode: 'strict',
@@ -20,7 +22,11 @@ const DEFAULT_STATS = {
   listened: 0,
   skipped: 0,
   firstInstall: Date.now(),
-  totalListeningSeconds: 0
+  totalListeningSeconds: 0,
+  totalUniqueSongs: 0,
+  totalArtists: 0,
+  loopsPrevented: 0,
+  smartScore: 50
 };
 
 const DEFAULT_SESSION = {
@@ -46,16 +52,21 @@ const DEFAULT_ACHIEVEMENTS = {
 // INSTALLATION HANDLER
 // ═══════════════════════════════════════════════════════════════
 
-chrome.runtime.onInstalled.addListener((details) => {
+chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === 'install') {
-    // First time install
-    chrome.storage.local.set({
+    // First time install - initialize with version
+    await chrome.storage.local.set({
+      dbVersion: CURRENT_DB_VERSION,
       enabled: true,
       settings: DEFAULT_SETTINGS,
       stats: DEFAULT_STATS,
       songHistory: {},
+      history: {},              // New unified history
       whitelist: [],
       blacklist: [],
+      blockedSongs: {},         // New: Instant block
+      favoriteSongs: {},        // New: Favorites
+      recentWins: [],           // New: Recent wins
       achievements: DEFAULT_ACHIEVEMENTS
     });
     
@@ -66,16 +77,65 @@ chrome.runtime.onInstalled.addListener((details) => {
     
     console.log('[Unloop] Extension installed! Welcome to Discovery Mode.');
   } else if (details.reason === 'update') {
-    // Extension updated - preserve data, update settings if needed
-    chrome.storage.local.get(['settings'], (result) => {
-      const currentSettings = result.settings || {};
-      const updatedSettings = { ...DEFAULT_SETTINGS, ...currentSettings };
-      chrome.storage.local.set({ settings: updatedSettings });
-    });
-    
+    // Extension updated - migrate database if needed
+    await initDatabase();
     console.log('[Unloop] Extension updated to version', chrome.runtime.getManifest().version);
   }
 });
+
+// ═══════════════════════════════════════════════════════════════
+// DATABASE VERSIONING & MIGRATION
+// ═══════════════════════════════════════════════════════════════
+
+async function initDatabase() {
+  const store = await chrome.storage.local.get(null);
+  const existingVersion = store.dbVersion || 0;
+
+  if (existingVersion === 0) {
+    // Upgrade from old version - preserve all existing data
+    await chrome.storage.local.set({
+      dbVersion: CURRENT_DB_VERSION,
+      history: store.history || store.songHistory || {},
+      stats: { ...DEFAULT_STATS, ...store.stats },
+      blockedSongs: store.blockedSongs || {},
+      favoriteSongs: store.favoriteSongs || {},
+      recentWins: store.recentWins || []
+    });
+    console.log('[Unloop] Database initialized to v' + CURRENT_DB_VERSION);
+    return;
+  }
+
+  // Future migrations
+  if (existingVersion < CURRENT_DB_VERSION) {
+    await migrateDatabase(existingVersion, store);
+  }
+}
+
+async function migrateDatabase(oldVersion, store) {
+  console.log(`[Unloop] Migrating database from v${oldVersion} to v${CURRENT_DB_VERSION}`);
+  
+  // Migration logic for future versions
+  if (oldVersion < 2) {
+    // Ensure stats has all new fields
+    const stats = store.stats || {};
+    if (!stats.totalUniqueSongs) {
+      stats.totalUniqueSongs = Object.keys(store.history || store.songHistory || {}).length;
+    }
+    if (!stats.totalArtists) {
+      const historyData = store.history || store.songHistory || {};
+      const artists = new Set(
+        Object.values(historyData).map(s => s.artist?.toLowerCase()?.trim()).filter(Boolean)
+      );
+      stats.totalArtists = artists.size;
+    }
+    if (stats.smartScore === undefined) stats.smartScore = 50;
+    
+    await chrome.storage.local.set({ stats });
+  }
+  
+  await chrome.storage.local.set({ dbVersion: CURRENT_DB_VERSION });
+  console.log('[Unloop] Migration complete!');
+}
 
 // ═══════════════════════════════════════════════════════════════
 // MESSAGE HANDLERS
@@ -143,6 +203,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       exportCsv(message.songHistory).then(sendResponse);
       return true;
 
+    case 'BLOCK_SONG':
+      blockSong(message.trackId).then(sendResponse);
+      return true;
+
+    case 'FAVORITE_SONG':
+      favoriteSong(message.trackId).then(sendResponse);
+      return true;
+
+    case 'UNBLOCK_SONG':
+      unblockSong(message.trackId).then(sendResponse);
+      return true;
+
+    case 'UNFAVORITE_SONG':
+      unfavoriteSong(message.trackId).then(sendResponse);
+      return true;
+
     default:
       sendResponse({ error: 'Unknown message type' });
       return false;
@@ -156,14 +232,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function getAllData() {
   return new Promise((resolve) => {
     chrome.storage.local.get(null, (data) => {
+      // Support both old (songHistory) and new (history) data structures
+      const historyData = data.history || data.songHistory || {};
+      const stats = data.stats || DEFAULT_STATS;
+      
       resolve({
         enabled: data.enabled !== false,
         settings: { ...DEFAULT_SETTINGS, ...data.settings },
-        stats: data.stats || DEFAULT_STATS,
-        songHistory: data.songHistory || {},
-        historyCount: Object.keys(data.songHistory || {}).length,
+        stats: stats,
+        songHistory: historyData,  // For backward compatibility
+        history: historyData,       // New unified structure
+        historyCount: Object.keys(historyData).length,
         whitelist: data.whitelist || [],
-        blacklist: data.blacklist || []
+        blacklist: data.blacklist || [],
+        blockedSongs: data.blockedSongs || {},
+        favoriteSongs: data.favoriteSongs || {},
+        recentWins: data.recentWins || []
       });
     });
   });
@@ -273,6 +357,62 @@ async function modifyList(listName, action, videoId) {
 
       chrome.storage.local.set({ [listName]: list }, () => {
         resolve({ success: true, list });
+      });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BLOCK & FAVORITE FUNCTIONS (Backup for background context)
+// ═══════════════════════════════════════════════════════════════
+
+async function blockSong(trackId) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['blockedSongs'], (result) => {
+      const blockedSongs = result.blockedSongs || {};
+      blockedSongs[trackId] = true;
+      
+      chrome.storage.local.set({ blockedSongs }, () => {
+        resolve({ success: true, trackId });
+      });
+    });
+  });
+}
+
+async function unblockSong(trackId) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['blockedSongs'], (result) => {
+      const blockedSongs = result.blockedSongs || {};
+      delete blockedSongs[trackId];
+      
+      chrome.storage.local.set({ blockedSongs }, () => {
+        resolve({ success: true, trackId });
+      });
+    });
+  });
+}
+
+async function favoriteSong(trackId) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['favoriteSongs'], (result) => {
+      const favoriteSongs = result.favoriteSongs || {};
+      favoriteSongs[trackId] = true;
+      
+      chrome.storage.local.set({ favoriteSongs }, () => {
+        resolve({ success: true, trackId });
+      });
+    });
+  });
+}
+
+async function unfavoriteSong(trackId) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['favoriteSongs'], (result) => {
+      const favoriteSongs = result.favoriteSongs || {};
+      delete favoriteSongs[trackId];
+      
+      chrome.storage.local.set({ favoriteSongs }, () => {
+        resolve({ success: true, trackId });
       });
     });
   });

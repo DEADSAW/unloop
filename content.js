@@ -801,6 +801,310 @@
     }
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // CORE DATA ENGINE - FIXES ALL STORAGE ISSUES
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * ✅ CORE FIX: Update song state consistently
+   * This function is called EVERY time a song is detected
+   * Fixes: Artist Discovery, Stats, Smart Learning, Everything
+   */
+  async function updateSongState(platform, trackId, title, artist) {
+    if (!isContextAlive() || sessionKilled) return;
+    
+    try {
+      const result = await chrome.storage.local.get(['history', 'stats']);
+      const history = result.history || {};
+      const stats = result.stats || {
+        totalUniqueSongs: 0,
+        totalArtists: 0,
+        totalListeningSeconds: 0,
+        loopsPrevented: 0,
+        smartScore: 50
+      };
+
+      // Initialize or update song record
+      if (!history[trackId]) {
+        history[trackId] = {
+          platform: platform,
+          title: title,
+          artist: artist,
+          plays: 0,
+          skips: 0,
+          listeningSeconds: 0,
+          firstPlayed: Date.now(),
+          lastPlayed: Date.now()
+        };
+      }
+
+      // Increment play count
+      history[trackId].plays++;
+      history[trackId].lastPlayed = Date.now();
+
+      // Update stats
+      stats.totalUniqueSongs = Object.keys(history).length;
+
+      // Calculate unique artists (with normalization)
+      const normalizeArtist = (name) => {
+        if (!name || name === 'Unknown') return null;
+        return name.toLowerCase().replace(/,/g, '').replace(/&/g, 'and').replace(/\s+/g, ' ').trim();
+      };
+      
+      const artistSet = new Set();
+      Object.values(history).forEach(song => {
+        const normalized = normalizeArtist(song.artist);
+        if (normalized) artistSet.add(normalized);
+      });
+      stats.totalArtists = artistSet.size;
+
+      // Save to storage
+      await chrome.storage.local.set({ history, stats });
+      
+      log(`✅ Data updated: ${stats.totalUniqueSongs} songs, ${stats.totalArtists} artists`);
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] updateSongState error:', error);
+      }
+    }
+  }
+
+  /**
+   * ✅ Add win to recent wins log
+   * Called when: loop prevented, smart decision, unique unlock
+   */
+  async function addWin(text) {
+    if (!isContextAlive() || sessionKilled) return;
+    
+    try {
+      const result = await chrome.storage.local.get(['recentWins']);
+      const recentWins = result.recentWins || [];
+      
+      recentWins.unshift({
+        text: text,
+        time: Date.now()
+      });
+      
+      // Keep only last 10 wins
+      await chrome.storage.local.set({ 
+        recentWins: recentWins.slice(0, 10) 
+      });
+      
+      log(`🏆 Win logged: ${text}`);
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] addWin error:', error);
+      }
+    }
+  }
+
+  /**
+   * ✅ Adjust smart learning score
+   * good = true: user liked our decision
+   * good = false: user didn't like our decision
+   */
+  async function adjustSmartScore(good) {
+    if (!isContextAlive() || sessionKilled) return;
+    
+    try {
+      const result = await chrome.storage.local.get(['stats']);
+      const stats = result.stats || { smartScore: 50 };
+      
+      stats.smartScore = stats.smartScore || 50;
+      
+      if (good) {
+        stats.smartScore += 2;
+        log('📈 Smart score +2');
+      } else {
+        stats.smartScore -= 1;
+        log('📉 Smart score -1');
+      }
+      
+      // Clamp between 10-100
+      stats.smartScore = Math.max(10, Math.min(100, stats.smartScore));
+      
+      await chrome.storage.local.set({ stats });
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] adjustSmartScore error:', error);
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // BLOCK & FAVORITE FUNCTIONS (PRODUCTION-GRADE)
+  // ═══════════════════════════════════════════════════════════════
+
+  /**
+   * 🔒 Safe storage toggle - NEVER overwrites, always merges
+   * This is the key to reliable persistent storage
+   */
+  async function toggleStore(key, id) {
+    if (!isContextAlive()) return false;
+    
+    try {
+      const data = await chrome.storage.local.get([key]);
+      const map = data[key] || {};
+      
+      // Toggle state
+      if (map[id]) {
+        delete map[id];  // Remove if exists
+      } else {
+        map[id] = true;  // Add if doesn't exist
+      }
+      
+      await chrome.storage.local.set({ [key]: map });
+      
+      return map[id] === true;  // Return new state
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error(`[Unloop] toggleStore error for ${key}:`, error);
+      }
+      return false;
+    }
+  }
+
+  /**
+   * 🚫 Toggle block for current song
+   * - If not blocked → block + skip immediately
+   * - If blocked → unblock
+   */
+  async function toggleBlockCurrentSong() {
+    if (!isContextAlive() || sessionKilled) return;
+    
+    const trackId = state.currentVideoId || getVideoId();
+    if (!trackId) {
+      showToast('No song detected', 'error', '❌');
+      return;
+    }
+    
+    try {
+      const isNowBlocked = await toggleStore('blockedSongs', trackId);
+      
+      if (isNowBlocked) {
+        showToast('🚫 Blocked & Skipping', 'skip', '🚫');
+        log(`🚫 Blocked song: ${trackId}`);
+        
+        // Immediately skip
+        setTimeout(() => {
+          if (isContextAlive()) {
+            skipToNext();
+          }
+        }, 300);
+      } else {
+        showToast('✅ Unblocked', 'saved', '✅');
+        log(`✅ Unblocked song: ${trackId}`);
+      }
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] toggleBlock error:', error);
+      }
+    }
+  }
+
+  /**
+   * ❤️ Toggle favorite for current song
+   * - If not favorited → add to favorites
+   * - If favorited → remove from favorites
+   */
+  async function toggleFavoriteCurrentSong() {
+    if (!isContextAlive() || sessionKilled) return;
+    
+    const trackId = state.currentVideoId || getVideoId();
+    if (!trackId) {
+      showToast('No song detected', 'error', '❌');
+      return;
+    }
+    
+    try {
+      const isNowFavorited = await toggleStore('favoriteSongs', trackId);
+      
+      if (isNowFavorited) {
+        showToast('❤️ Added to Favorites', 'saved', '💜');
+        await addWin('Favorited a song ❤️');
+        log(`❤️ Favorited song: ${trackId}`);
+      } else {
+        showToast('💔 Removed from Favorites', 'skip', '💔');
+        log(`💔 Unfavorited song: ${trackId}`);
+      }
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] toggleFavorite error:', error);
+      }
+    }
+  }
+
+  /**
+   * 🚫 Block current song - immediately skips and never plays again
+   * (Legacy function - calls toggle)
+   */
+  async function blockCurrentSong(trackId) {
+    if (!isContextAlive() || sessionKilled) return;
+    await toggleBlockCurrentSong();
+  }
+
+  /**
+   * ❤️ Favorite current song - protected from auto-skip
+   * (Legacy function - calls toggle)
+   */
+  async function favoriteCurrentSong(trackId) {
+    if (!isContextAlive() || sessionKilled) return;
+    await toggleFavoriteCurrentSong();
+  }
+
+  /**
+   * Check if song is blocked - if yes, skip immediately
+   * Returns true if blocked (should abort processing)
+   */
+  async function checkIfBlocked(trackId) {
+    if (!isContextAlive() || sessionKilled) return false;
+    
+    try {
+      const result = await chrome.storage.local.get(['blockedSongs']);
+      const blockedSongs = result.blockedSongs || {};
+      
+      if (blockedSongs[trackId]) {
+        showToast('Blocked song skipped 🚫', 'skip', '🚫');
+        
+        setTimeout(() => {
+          if (isContextAlive()) {
+            skipToNext();
+          }
+        }, CONFIG.SKIP_DELAY);
+        
+        log(`🚫 Auto-skipped blocked song: ${trackId}`);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] Check blocked error:', error);
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Check if song is favorited
+   * Returns true if favorited (should never skip)
+   */
+  async function checkIfFavorited(trackId) {
+    if (!isContextAlive() || sessionKilled) return false;
+    
+    try {
+      const result = await chrome.storage.local.get(['favoriteSongs']);
+      const favoriteSongs = result.favoriteSongs || {};
+      
+      return favoriteSongs[trackId] === true;
+    } catch (error) {
+      if (!isContextInvalidatedError(error)) {
+        console.error('[Unloop] Check favorited error:', error);
+      }
+      return false;
+    }
+  }
+
   /**
    * Track when user skips a song quickly (< 20 seconds)
    * This indicates strong dislike for Smart Auto learning
@@ -1266,6 +1570,33 @@
       const songInfo = getSongInfo();
       log(`Processing: "${songInfo.title}" by ${songInfo.artist} [${videoId}]`);
 
+      // 🚫 FIRST PRIORITY: Check if song is blocked
+      const isBlocked = await checkIfBlocked(videoId);
+      if (isBlocked) {
+        state.isProcessing = false;
+        return;
+      }
+
+      // ❤️ SECOND PRIORITY: Check if favorited (auto-allow)
+      const isFavorited = await checkIfFavorited(videoId);
+      if (isFavorited) {
+        log('❤️ Favorite song detected - auto-allowing');
+        await addWin('Protected favorite ❤️');
+        showToast('Playing favorite ❤️', 'saved', '💜');
+        
+        // Update state and continue
+        const platform = detectPlatform();
+        await updateSongState(platform, videoId, songInfo.title, songInfo.artist);
+        state.lastProcessedId = videoId;
+        state.isProcessing = false;
+        return;
+      }
+
+      // ✅ CORE FIX: Update song state EVERY time we detect a song
+      // This fixes Artist Discovery, Stats, Smart Learning
+      const platform = detectPlatform();
+      await updateSongState(platform, videoId, songInfo.title, songInfo.artist);
+
       // Make decision
       const decision = await shouldSkipSong(videoId, songInfo);
       
@@ -1286,6 +1617,15 @@
       if (decision.skip) {
         // SKIP THE SONG
         await incrementSkipCount();
+        
+        // ✅ Log win for recent wins display
+        const winMessage = decision.message || `Prevented repeat: ${songInfo.title?.substring(0, 30)}`;
+        await addWin(winMessage);
+        
+        // ✅ Adjust smart score (skip = good decision)
+        if (state.settings.mode === 'smart-auto') {
+          await adjustSmartScore(true);
+        }
         
         // Check if stale
         if (token !== songProcessToken) {
@@ -1339,6 +1679,14 @@
         if (isNewSong) {
           // New song - save it to history
           await saveSong(videoId, songInfo);
+          
+          // ✅ Log win for new discovery
+          await addWin(`New discovery: ${songInfo.artist}`);
+          
+          // ✅ Smart score +1 for good decision (allowing new song)
+          if (state.settings.mode === 'smart-auto') {
+            await adjustSmartScore(true);
+          }
           
           // Increment new songs counter (for semi-strict mode)
           state.sessionData.newSongsSinceRepeat++;
@@ -1633,6 +1981,22 @@
               }),
               null
             );
+          }
+          sendResponse({ success: true });
+          break;
+
+        case 'BLOCK_CURRENT_SONG':
+          // Content script owns the track - no trackId needed from popup
+          if (isExtensionValid()) {
+            toggleBlockCurrentSong();
+          }
+          sendResponse({ success: true });
+          break;
+
+        case 'FAVORITE_CURRENT_SONG':
+          // Content script owns the track - no trackId needed from popup
+          if (isExtensionValid()) {
+            toggleFavoriteCurrentSong();
           }
           sendResponse({ success: true });
           break;

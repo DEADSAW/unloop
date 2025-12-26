@@ -141,16 +141,22 @@ function updateUI() {
   // Health Grid
   updateHealthGrid();
 
-  // Stats
-  elements.songsListened.textContent = formatNumber(currentData.stats.listened);
-  elements.skipsCount.textContent = formatNumber(currentData.stats.skipped);
+  // Stats - support both old and new structures
+  const historyData = currentData.history || currentData.songHistory || {};
+  const uniqueSongs = Object.keys(historyData).length;
   
-  // Unique songs = history count
-  const uniqueSongs = Object.keys(currentData.songHistory || {}).length;
+  // Songs Explored (unique songs)
+  elements.songsListened.textContent = formatNumber(uniqueSongs);
+  
+  // Loops Prevented (skips count)
+  const loopsCount = currentData.stats.skipped || currentData.stats.loopsPrevented || 0;
+  elements.skipsCount.textContent = formatNumber(loopsCount);
+  
+  // Total history count
   elements.historyCount.textContent = formatNumber(uniqueSongs);
   
-  // Artist count
-  const artistCount = countUniqueArtists();
+  // Artist count - use stats.totalArtists if available, otherwise calculate
+  const artistCount = currentData.stats?.totalArtists || countUniqueArtists();
   if (elements.artistsCount) {
     elements.artistsCount.textContent = formatNumber(artistCount);
   }
@@ -255,9 +261,17 @@ function updateHealthGrid() {
 }
 
 function calculateIntelligence(callback) {
-  chrome.storage.local.get(['learningLog', 'songHistory'], (result) => {
+  chrome.storage.local.get(['learningLog', 'songHistory', 'history', 'stats'], (result) => {
+    // First check if we have smartScore in stats (new system)
+    if (result.stats && result.stats.smartScore) {
+      callback(Math.round(result.stats.smartScore));
+      return;
+    }
+    
+    // Fallback to old calculation
     const learningLog = result.learningLog || [];
-    const historySize = Object.keys(result.songHistory || {}).length;
+    const historyData = result.history || result.songHistory || {};
+    const historySize = Object.keys(historyData).length;
     
     if (learningLog.length === 0 && historySize === 0) {
       callback(0);
@@ -285,7 +299,10 @@ function calculateIntelligence(callback) {
 }
 
 function countUniqueArtists() {
-  if (!currentData || !currentData.songHistory) return 0;
+  // Check both old (songHistory) and new (history) data structures
+  const historyData = currentData?.history || currentData?.songHistory || {};
+  
+  if (Object.keys(historyData).length === 0) return 0;
   
   const normalizeArtist = (name) => {
     if (!name || name === 'Unknown') return null;
@@ -293,7 +310,7 @@ function countUniqueArtists() {
   };
   
   const artists = new Set();
-  Object.values(currentData.songHistory).forEach(song => {
+  Object.values(historyData).forEach(song => {
     const normalized = normalizeArtist(song.artist);
     if (normalized) artists.add(normalized);
   });
@@ -414,37 +431,45 @@ function updateIntelligenceBadge() {
 }
 
 function updateRecentWins() {
-  chrome.storage.local.get(['learningLog'], (result) => {
-    const learningLog = result.learningLog || [];
-    const today = new Date().toDateString();
+  chrome.storage.local.get(['recentWins', 'learningLog'], (result) => {
+    // Try new recentWins structure first
+    let wins = [];
     
-    // Count protections today
-    const todayProtections = learningLog.filter(log => {
-      const logDate = new Date(log.timestamp).toDateString();
-      return logDate === today && (log.eventType === 'skip_protected' || log.eventType === 'artist_protected');
-    }).length;
-    
-    const annoyingBlocked = learningLog.filter(log => 
-      log.eventType === 'annoying_blocked'
-    ).length;
-    
-    const artistProtected = learningLog.filter(log => 
-      log.eventType === 'artist_protected'
-    ).length;
-    
-    // Build wins list with emotional messages
-    const wins = [];
-    if (todayProtections > 0) {
-      wins.push(`🎯 Protected you ${todayProtections} time${todayProtections > 1 ? 's' : ''} today`);
-    }
-    if (annoyingBlocked > 0) {
-      wins.push(`🚫 Blocked ${annoyingBlocked} annoying repeat${annoyingBlocked > 1 ? 's' : ''}`);
-    }
-    if (artistProtected > 2) {
-      wins.push(`🎭 Avoided artist spam ${artistProtected} times`);
-    }
-    if (learningLog.length > 10) {
-      wins.push(`🌱 Learning from your taste`);
+    if (result.recentWins && result.recentWins.length > 0) {
+      // New structure - direct wins array
+      wins = result.recentWins.slice(0, 5).map(win => win.text);
+    } else {
+      // Fallback to old learningLog structure
+      const learningLog = result.learningLog || [];
+      const today = new Date().toDateString();
+      
+      // Count protections today
+      const todayProtections = learningLog.filter(log => {
+        const logDate = new Date(log.timestamp).toDateString();
+        return logDate === today && (log.eventType === 'skip_protected' || log.eventType === 'artist_protected');
+      }).length;
+      
+      const annoyingBlocked = learningLog.filter(log => 
+        log.eventType === 'annoying_blocked'
+      ).length;
+      
+      const artistProtected = learningLog.filter(log => 
+        log.eventType === 'artist_protected'
+      ).length;
+      
+      // Build wins list with emotional messages
+      if (todayProtections > 0) {
+        wins.push(`🎯 Protected you ${todayProtections} time${todayProtections > 1 ? 's' : ''} today`);
+      }
+      if (annoyingBlocked > 0) {
+        wins.push(`🚫 Blocked ${annoyingBlocked} annoying repeat${annoyingBlocked > 1 ? 's' : ''}`);
+      }
+      if (artistProtected > 2) {
+        wins.push(`🎭 Avoided artist spam ${artistProtected} times`);
+      }
+      if (learningLog.length > 10) {
+        wins.push(`🌱 Learning from your taste`);
+      }
     }
     
     if (wins.length === 0) {
@@ -795,30 +820,34 @@ async function handleClear() {
 }
 
 async function handleWhitelist() {
-  if (!currentVideoInfo || !currentVideoInfo.videoId) {
-    showToast('No song detected', 'error');
+  // Send intent to content script - it owns the current track
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab) {
+    showToast('No active tab found', 'error');
     return;
   }
-
-  // Send message to content script to add to whitelist
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab) {
-    chrome.tabs.sendMessage(tab.id, { type: 'ADD_CURRENT_TO_WHITELIST' });
-    showToast(`Added "${currentVideoInfo.title?.substring(0, 20)}..." to favorites ❤️`, 'success');
+  
+  try {
+    chrome.tabs.sendMessage(tab.id, { type: 'FAVORITE_CURRENT_SONG' });
+    // Toast handled by content script
+  } catch (error) {
+    showToast('Could not reach page', 'error');
   }
 }
 
 async function handleBlacklist() {
-  if (!currentVideoInfo || !currentVideoInfo.videoId) {
-    showToast('No song detected', 'error');
+  // Send intent to content script - it owns the current track
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab) {
+    showToast('No active tab found', 'error');
     return;
   }
-
-  // Send message to content script to add to blacklist
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab) {
-    chrome.tabs.sendMessage(tab.id, { type: 'ADD_CURRENT_TO_BLACKLIST' });
-    showToast(`Blocked "${currentVideoInfo.title?.substring(0, 20)}..." 🚫`, 'success');
+  
+  try {
+    chrome.tabs.sendMessage(tab.id, { type: 'BLOCK_CURRENT_SONG' });
+    // Toast handled by content script
+  } catch (error) {
+    showToast('Could not reach page', 'error');
   }
 }
 
