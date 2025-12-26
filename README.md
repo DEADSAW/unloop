@@ -43,7 +43,13 @@ Unloop intelligently tracks every song you've heard and automatically skips repe
 </tr>
 </table>
 
-> 📸 **Note**: Real screenshots of the interface will be added soon! See [SCREENSHOTS_GUIDE.md](SCREENSHOTS_GUIDE.md) for details.
+### **Dark Mode Interface**
+
+![Unloop Dark Mode](https://github.com/user-attachments/assets/118555ff-d164-4175-a327-3ac314d28ee9)
+
+### **Light Mode Interface**
+
+![Unloop Light Mode](https://github.com/user-attachments/assets/5ed2e2de-40bb-4ed7-ab7b-bf5b8d9cfaad)
 
 ---
 
@@ -751,33 +757,6 @@ allow("Smart choice ✨");
 
 ---
 
-### **📈 Real User Results**
-
-<table>
-<tr>
-<td width="33%" align="center">
-<h2>2,400</h2>
-<strong>New Songs Discovered</strong><br>
-<em>"In just 3 months!"</em><br>
-— Sarah, Music Blogger
-</td>
-<td width="33%" align="center">
-<h2>87%</h2>
-<strong>Freshness Score</strong><br>
-<em>"Never felt more connected to new music"</em><br>
-— Mike, Software Engineer
-</td>
-<td width="33%" align="center">
-<h2>500+</h2>
-<strong>Hours Saved</strong><br>
-<em>"No more manual skip clicking"</em><br>
-— Alex, Student
-</td>
-</tr>
-</table>
-
----
-
 ### **🎓 For Music Explorers**
 *"I want to discover as much new music as possible"*
 
@@ -786,8 +765,6 @@ allow("Smart choice ✨");
 - Perfect for building massive playlists
 - Discover 100+ new songs per week
 - Great for finding hidden gems
-
-**Real Story**: *"I used Strict mode for 3 months and discovered 2,400 new songs. Found 5 new favorite artists I'd never heard of!" — Sarah, Music Blogger*
 
 ---
 
@@ -800,8 +777,6 @@ allow("Smart choice ✨");
 - Maintains discovery while allowing favorites
 - Prevents burnout from too much newness
 
-**Real Story**: *"Memory Fade with 7-day cooldown is perfect. I get fresh music all week, then my favorites come back on Sundays." — Mike, Software Engineer*
-
 ---
 
 ### **🎯 For Goal-Oriented Users**
@@ -812,8 +787,6 @@ allow("Smart choice ✨");
 - Gamifies the listening experience
 - Perfect for "Discover 500 songs this year" goals
 - Satisfying progress tracking
-
-**Real Story**: *"Semi-Strict with 15-song threshold made me discover 1,800 new songs in 6 months. It's addicting!" — Alex, Student*
 
 ---
 
@@ -826,8 +799,6 @@ allow("Smart choice ✨");
 - Still allows repeats, just from different artists
 - Great for discovering new artists in familiar genres
 
-**Real Story**: *"Artist Smart saved me from Spotify's endless Ed Sheeran loop. Now I discover 10+ new artists per week." — Emma, Designer*
-
 ---
 
 ### **🤖 For Hands-Off Users**
@@ -838,8 +809,6 @@ allow("Smart choice ✨");
 - Learns your preferences over time
 - Loved songs return sooner, disliked songs stay away
 - Perfect "set and forget" mode
-
-**Real Story**: *"Smart Auto feels like having a personal DJ who knows exactly when I'm ready to hear a song again." — James, Product Manager*
 
 ---
 
@@ -852,8 +821,6 @@ allow("Smart choice ✨");
 3. Let Unloop auto-skip all repeats
 4. Export history as CSV after session
 5. Import into Spotify/Apple Music
-
-**Real Story**: *"Built a 600-song workout playlist in 2 weeks using Strict mode. Not a single duplicate!" — Chris, Fitness Trainer*
 
 ---
 
@@ -1514,33 +1481,6 @@ Total Plays: 30
 Repeats: 0 (0%)
 Feeling: 🎉 Excited
 ```
-
----
-
-## 💬 User Testimonials
-
-> *"This extension changed how I discover music. I went from hearing the same 20 songs on Spotify to discovering 500+ new artists in 3 months. Game changer."*  
-> **— Sarah M., Music Blogger**
-
----
-
-> *"Smart Auto mode feels like magic. Songs I love come back just when I'm ready to hear them again, and songs I hate disappear for weeks. It's perfect."*  
-> **— Mike T., Software Engineer**
-
----
-
-> *"I built a 600-song workout playlist using Strict mode in 2 weeks. Not a single duplicate. Would've taken me months manually."*  
-> **— Chris P., Fitness Trainer**
-
----
-
-> *"As someone with ADHD, hearing the same song twice kills my focus. Unloop keeps my study sessions fresh and my productivity high."*  
-> **— Alex K., Student**
-
----
-
-> *"The Achievement system is surprisingly motivating. I'm at 347 loops prevented and gunning for 500. Gamification done right!"*  
-> **— Emma L., Designer**
 
 ---
 
