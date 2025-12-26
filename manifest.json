@@ -1,19 +1,29 @@
 {
   "manifest_version": 3,
-  "name": "Unloop - Music Discovery Mode",
+  "name": "Unloop - Fresh Music Discovery",
   "version": "1.0.0",
-  "description": "Never hear the same song twice. Auto-skip repeated tracks on YouTube & YouTube Music for endless discovery.",
+  "description": "Never hear the same song twice. Auto-skip repeats on YouTube & YouTube Music with smart discovery modes.",
+  
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
+  
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  
   "host_permissions": [
     "https://www.youtube.com/*",
-    "https://music.youtube.com/*"
+    "https://music.youtube.com/*",
+    "https://open.spotify.com/*"
   ],
+  
   "background": {
     "service_worker": "background.js"
   },
+  
   "content_scripts": [
     {
       "matches": [
@@ -21,9 +31,19 @@
         "https://music.youtube.com/*"
       ],
       "js": ["content.js"],
+      "css": ["toast.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://open.spotify.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["toast.css"],
       "run_at": "document_idle"
     }
   ],
+  
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Unloop - Discovery Mode"

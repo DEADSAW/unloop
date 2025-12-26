@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unloop - Discovery Mode</title>
   <link rel="stylesheet" href="popup.css">
+  <script src="../assets/chart.js"></script>
 </head>
 <body>
   <div class="container">
@@ -14,7 +15,7 @@
         <div class="logo-icon">∞</div>
         <div class="logo-text">
           <h1>Unloop</h1>
-          <span class="tagline">Discovery Mode</span>
+          <span class="tagline">Your Vibe Companion</span>
         </div>
       </div>
       <label class="toggle-switch">
@@ -23,25 +24,118 @@
       </label>
     </header>
 
-    <!-- Status Banner -->
-    <div class="status-banner" id="statusBanner">
-      <span class="status-icon">🎵</span>
-      <span class="status-text" id="statusText">Discovery Mode Active</span>
+    <!-- Emotional Status -->
+    <div class="status-header" id="statusHeader">
+      <div class="status-main">
+        <span class="status-icon" id="statusIcon">✨</span>
+        <div class="status-content">
+          <div class="status-mode" id="statusMode">Smart Auto: ON</div>
+          <div class="status-subtext" id="statusSubtext">I've got this 🎧</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Health Indicators -->
+    <div class="health-grid" id="healthGrid">
+      <div class="health-card">
+        <div class="health-icon">🎧</div>
+        <div class="health-content">
+          <div class="health-value" id="freshnessValue">--</div>
+          <div class="health-label">Freshness</div>
+        </div>
+      </div>
+      <div class="health-card">
+        <div class="health-icon">🧠</div>
+        <div class="health-content">
+          <div class="health-value" id="intelligenceValue">--</div>
+          <div class="health-label">Intelligence</div>
+        </div>
+      </div>
+      <div class="health-card">
+        <div class="health-icon">🌿</div>
+        <div class="health-content">
+          <div class="health-value" id="varietyValue">--</div>
+          <div class="health-label">Variety</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intelligence Badge (Smart Auto only) -->
+    <div class="intelligence-badge" id="intelligenceBadge" style="display: none;">
+      <div class="badge-content">
+        <span class="badge-emoji" id="badgeEmoji">🐣</span>
+        <span class="badge-text" id="badgeText">Still Learning</span>
+      </div>
+      <div class="badge-bar">
+        <div class="badge-fill" id="badgeFill"></div>
+      </div>
+    </div>
+
+    <!-- Recent Wins (Smart Auto only) -->
+    <div class="recent-wins" id="recentWins" style="display: none;">
+      <div class="wins-header">Recent Wins</div>
+      <div class="wins-list" id="winsList">
+        <div class="win-item">🎯 Protected you 0 times today</div>
+      </div>
+    </div>
+
+    <!-- Stats Summary -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value" id="songsListened">0</div>
-        <div class="stat-label">Songs Discovered</div>
+        <div class="stat-label">Songs Explored</div>
       </div>
       <div class="stat-card highlight">
         <div class="stat-value" id="skipsCount">0</div>
-        <div class="stat-label">Repeats Blocked</div>
+        <div class="stat-label">Loops Prevented</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="freshnessScore">100%</div>
-        <div class="stat-label">Freshness</div>
+        <div class="stat-value" id="artistsCount">0</div>
+        <div class="stat-label">Artists Found</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="sessionSongsCount">0</div>
+        <div class="stat-label">This Session</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalListeningTime">--</div>
+        <div class="stat-label">Total Listening Time</div>
+      </div>
+    </div>
+
+    <!-- Customization Options -->
+    <section class="section customization-section" id="customizationSection">
+      <h2 class="section-title">
+        <span class="section-icon">🎨</span>
+        Customize
+      </h2>
+      <div class="customization-grid">
+        <div class="custom-option">
+          <span class="custom-label">🌙 Theme</span>
+          <div class="theme-selector">
+            <label><input type="radio" name="theme" value="dark" checked> Dark</label>
+            <label><input type="radio" name="theme" value="light"> Light</label>
+            <label><input type="radio" name="theme" value="auto"> Auto</label>
+          </div>
+        </div>
+        <div class="custom-option">
+          <span class="custom-label">💫 Minimal Mode</span>
+          <label class="toggle-switch small">
+            <input type="checkbox" id="minimalModeToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Learning Graphs (Smart Auto only) -->
+    <div class="graphs-section" id="graphsSection" style="display: none;">
+      <div class="section-title">
+        <span class="section-icon">📈</span>
+        Your Growth Journey
+      </div>
+      <div class="graph-card">
+        <canvas id="learningGraph"></canvas>
       </div>
     </div>
 
@@ -52,6 +146,14 @@
         Discovery Mode
       </h2>
       <div class="mode-selector">
+        <label class="mode-option smart-auto-option">
+          <input type="radio" name="mode" value="smart-auto">
+          <div class="mode-content">
+            <div class="mode-name">✨ Smart Auto <span class="badge-new">AI</span></div>
+            <div class="mode-desc">I'll learn your taste and keep things fresh</div>
+          </div>
+        </label>
+        
         <label class="mode-option">
           <input type="radio" name="mode" value="strict" checked>
           <div class="mode-content">
@@ -88,13 +190,29 @@
 
     <!-- Mode Settings (conditional) -->
     <section class="section settings-panel" id="memoryFadeSettings" style="display: none;">
-      <h3 class="settings-title">Memory Duration</h3>
-      <div class="slider-container">
-        <input type="range" id="memoryFadeDays" min="7" max="365" value="180" class="range-slider">
-        <div class="slider-labels">
-          <span>1 week</span>
-          <span id="memoryFadeValue">6 months</span>
-          <span>1 year</span>
+      <h3 class="settings-title">Custom Memory Duration</h3>
+      <div class="input-container">
+        <label for="memoryFadeHours" class="input-label">
+          <span class="input-label-text">Hours until song becomes fresh again</span>
+          <span class="input-hint" id="memoryFadeHint">After 72 hours, songs can be played again</span>
+        </label>
+        <div class="input-wrapper">
+          <input 
+            type="number" 
+            id="memoryFadeHours" 
+            class="number-input" 
+            min="1" 
+            max="8760" 
+            value="72"
+            placeholder="Enter hours (1-8760)"
+          >
+          <span class="input-suffix">hours</span>
+        </div>
+        <div class="quick-presets">
+          <button class="preset-btn" data-hours="24">1 day</button>
+          <button class="preset-btn" data-hours="72">3 days</button>
+          <button class="preset-btn" data-hours="168">1 week</button>
+          <button class="preset-btn" data-hours="720">1 month</button>
         </div>
       </div>
     </section>
@@ -126,10 +244,35 @@
     <!-- Action Buttons -->
     <section class="section">
       <h2 class="section-title">
+        <span class="section-icon">🎵</span>
+        Current Song
+      </h2>
+      <div class="current-song" id="currentSongInfo">
+        <div class="current-song-text">No song detected</div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-success" id="whitelistBtn">
+          <span class="btn-icon">❤️</span>
+          Favorite
+        </button>
+        <button class="btn btn-danger" id="blacklistBtn">
+          <span class="btn-icon">🚫</span>
+          Block
+        </button>
+      </div>
+    </section>
+
+    <!-- Data Management -->
+    <section class="section">
+      <h2 class="section-title">
         <span class="section-icon">⚡</span>
-        Actions
+        Data
       </h2>
       <div class="action-buttons">
+        <button class="btn btn-secondary" id="downloadCsvBtn">
+          <span class="btn-icon">📊</span>
+          CSV Export
+        </button>
         <button class="btn btn-secondary" id="exportBtn">
           <span class="btn-icon">📤</span>
           Export
@@ -138,13 +281,43 @@
           <span class="btn-icon">📥</span>
           Import
         </button>
-        <button class="btn btn-danger" id="clearBtn">
+        <button class="btn btn-danger-outline" id="clearBtn">
           <span class="btn-icon">🗑️</span>
-          Clear History
+          Clear
         </button>
       </div>
       <input type="file" id="importFile" accept=".json" style="display: none;">
     </section>
+
+    <!-- Developer Credit -->
+    <div class="dev-credit">
+      <span class="credit-text">MADE WITH ❤️ BY <strong>SANGAM</strong></span>
+      <div class="social-icons">
+        <a href="https://github.com/DEADSAW" 
+           target="_blank" 
+           class="social-icon" 
+           title="GitHub • DEADSAW">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/in/raisangam/"
+           target="_blank" 
+           class="social-icon"
+           title="LinkedIn • Sangam Rai">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+        <a href="mailto:iamsangamrai@gmail.com"
+           class="social-icon"
+           title="Email • iamsangamrai@gmail.com">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

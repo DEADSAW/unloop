@@ -9,15 +9,37 @@
 
 const DEFAULT_SETTINGS = {
   mode: 'strict',
-  memoryFadeDays: 180,
+  memoryFadeHours: 72,       // Hours instead of days (72h = 3 days default)
   songsBeforeRepeat: 5,
-  maxArtistPerSession: 3
+  maxArtistPerSession: 3,
+  theme: 'dark',             // dark | light | auto
+  minimalMode: false         // Minimal UI toggle
 };
 
 const DEFAULT_STATS = {
   listened: 0,
   skipped: 0,
-  firstInstall: Date.now()
+  firstInstall: Date.now(),
+  totalListeningSeconds: 0
+};
+
+const DEFAULT_SESSION = {
+  songs: [],
+  artists: [],
+  startedAt: Date.now()
+};
+
+const DEFAULT_ACHIEVEMENTS = {
+  loops25: false,
+  loops50: false,
+  loops100: false,
+  loops250: false,
+  loops500: false,
+  intel50: false,
+  intel70: false,
+  intel85: false,
+  intel95: false,
+  explorer500: false
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -33,7 +55,13 @@ chrome.runtime.onInstalled.addListener((details) => {
       stats: DEFAULT_STATS,
       songHistory: {},
       whitelist: [],
-      blacklist: []
+      blacklist: [],
+      achievements: DEFAULT_ACHIEVEMENTS
+    });
+    
+    // Session storage (resets on browser restart)
+    chrome.storage.session.set({
+      sessionData: DEFAULT_SESSION
     });
     
     console.log('[Unloop] Extension installed! Welcome to Discovery Mode.');
@@ -95,6 +123,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       modifyList('blacklist', 'remove', message.videoId).then(sendResponse);
       return true;
 
+    case 'TRACK_SESSION_SONG':
+      trackSessionSong(message.title, message.artist).then(sendResponse);
+      return true;
+
+    case 'GET_SESSION_DATA':
+      getSessionData().then(sendResponse);
+      return true;
+
+    case 'RESET_SESSION':
+      resetSession().then(sendResponse);
+      return true;
+
+    case 'CHECK_ACHIEVEMENTS':
+      checkAchievements(message.stats, message.intelligence).then(sendResponse);
+      return true;
+
+    case 'EXPORT_CSV':
+      exportCsv(message.songHistory).then(sendResponse);
+      return true;
+
     default:
       sendResponse({ error: 'Unknown message type' });
       return false;
@@ -112,6 +160,7 @@ async function getAllData() {
         enabled: data.enabled !== false,
         settings: { ...DEFAULT_SETTINGS, ...data.settings },
         stats: data.stats || DEFAULT_STATS,
+        songHistory: data.songHistory || {},
         historyCount: Object.keys(data.songHistory || {}).length,
         whitelist: data.whitelist || [],
         blacklist: data.blacklist || []
@@ -233,6 +282,21 @@ async function modifyList(listName, action, videoId) {
 // HELPER FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * Normalize artist name for consistent counting
+ * Fixes issues with artist discovery showing 0
+ */
+function normalizeArtist(name) {
+  if (!name) return 'Unknown';
+  
+  return name
+    .toLowerCase()
+    .replace(/,/g, '')
+    .replace(/&/g, 'and')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function notifyContentScripts(message) {
   chrome.tabs.query({ 
     url: ['*://www.youtube.com/*', '*://music.youtube.com/*'] 
@@ -241,6 +305,200 @@ function notifyContentScripts(message) {
       chrome.tabs.sendMessage(tab.id, message).catch(() => {
         // Tab might not have content script loaded
       });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SESSION TRACKING FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+async function trackSessionSong(title, artist) {
+  return new Promise((resolve) => {
+    chrome.storage.session.get(['sessionSongs'], (result) => {
+      let sessionSongs = result.sessionSongs || [];
+      
+      // Track unique songs by title|artist key
+      const songKey = `${title}|${artist}`;
+      if (!sessionSongs.includes(songKey)) {
+        sessionSongs.push(songKey);
+      }
+      
+      chrome.storage.session.set({ sessionSongs }, () => {
+        resolve({ 
+          success: true, 
+          count: sessionSongs.length
+        });
+      });
+    });
+  });
+}
+
+async function getSessionData() {
+  return new Promise((resolve) => {
+    chrome.storage.session.get(['sessionSongs'], (result) => {
+      resolve({ 
+        songs: result.sessionSongs || [],
+        count: (result.sessionSongs || []).length
+      });
+    });
+  });
+}
+
+async function resetSession() {
+  return new Promise((resolve) => {
+    chrome.storage.session.set({ sessionSongs: [] }, () => {
+      resolve({ success: true });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ACHIEVEMENTS SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+async function checkAchievements(stats, intelligence) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['achievements'], (result) => {
+      const achievements = result.achievements || DEFAULT_ACHIEVEMENTS;
+      const newAchievements = [];
+      
+      // Loop milestones
+      if (!achievements.loops25 && stats.skipped >= 25) {
+        achievements.loops25 = true;
+        newAchievements.push({
+          id: 'loops25',
+          message: '🎉 Nice! You\'ve avoided 25 boring repeats',
+          emoji: '🎉'
+        });
+      }
+      
+      if (!achievements.loops50 && stats.skipped >= 50) {
+        achievements.loops50 = true;
+        newAchievements.push({
+          id: 'loops50',
+          message: '🌟 Awesome! 50 repeats dodged successfully',
+          emoji: '🌟'
+        });
+      }
+      
+      if (!achievements.loops100 && stats.skipped >= 100) {
+        achievements.loops100 = true;
+        newAchievements.push({
+          id: 'loops100',
+          message: '🎊 Incredible! 100 loops prevented',
+          emoji: '🎊'
+        });
+      }
+      
+      if (!achievements.loops250 && stats.skipped >= 250) {
+        achievements.loops250 = true;
+        newAchievements.push({
+          id: 'loops250',
+          message: '🏆 Amazing! 250 repeats avoided – you\'re a discovery master',
+          emoji: '🏆'
+        });
+      }
+      
+      if (!achievements.loops500 && stats.skipped >= 500) {
+        achievements.loops500 = true;
+        newAchievements.push({
+          id: 'loops500',
+          message: '💎 Legendary! 500 loops prevented – absolute champion',
+          emoji: '💎'
+        });
+      }
+      
+      // Intelligence milestones
+      if (!achievements.intel50 && intelligence >= 50) {
+        achievements.intel50 = true;
+        newAchievements.push({
+          id: 'intel50',
+          message: '🧠 I\'m starting to understand your taste',
+          emoji: '🧠'
+        });
+      }
+      
+      if (!achievements.intel70 && intelligence >= 70) {
+        achievements.intel70 = true;
+        newAchievements.push({
+          id: 'intel70',
+          message: '😎 I know you pretty well now',
+          emoji: '😎'
+        });
+      }
+      
+      if (!achievements.intel85 && intelligence >= 85) {
+        achievements.intel85 = true;
+        newAchievements.push({
+          id: 'intel85',
+          message: '🔥 We\'re totally in sync with your music taste',
+          emoji: '🔥'
+        });
+      }
+      
+      if (!achievements.intel95 && intelligence >= 95) {
+        achievements.intel95 = true;
+        newAchievements.push({
+          id: 'intel95',
+          message: '✨ I understand you better than you understand yourself',
+          emoji: '✨'
+        });
+      }
+      
+      // Save achievements
+      chrome.storage.local.set({ achievements }, () => {
+        resolve({ 
+          success: true, 
+          newAchievements,
+          achievements
+        });
+      });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CSV EXPORT
+// ═══════════════════════════════════════════════════════════════
+
+async function exportCsv(songHistory) {
+  return new Promise((resolve) => {
+    // CSV Header
+    const headers = ['Platform', 'Title', 'Artist', 'Plays', 'Skips', 'First Played', 'Last Played'];
+    const rows = [headers.join(',')];
+    
+    // Convert song history to CSV rows
+    Object.keys(songHistory).forEach(videoId => {
+      const song = songHistory[videoId];
+      
+      const escapeCsv = (str) => {
+        if (!str) return '""';
+        str = String(str);
+        if (str.includes(',') || str.includes('"') || str.includes('\\n')) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
+      
+      const row = [
+        escapeCsv(song.platform || 'Unknown'),
+        escapeCsv(song.title || 'Unknown'),
+        escapeCsv(song.artist || 'Unknown'),
+        song.plays || 0,
+        song.skips || 0,
+        song.firstPlayed ? new Date(song.firstPlayed).toISOString() : '',
+        song.lastPlayed ? new Date(song.lastPlayed).toISOString() : ''
+      ];
+      
+      rows.push(row.join(','));
+    });
+    
+    const csvContent = rows.join('\\n');
+    resolve({ 
+      success: true, 
+      csv: csvContent,
+      totalSongs: Object.keys(songHistory).length
     });
   });
 }
