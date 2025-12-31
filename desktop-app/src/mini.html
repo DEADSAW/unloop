@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unloop Mini</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px;
+      -webkit-app-region: drag;
+      user-select: none;
+    }
+
+    .mini-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mini-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .mini-close {
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      transition: all 0.2s;
+    }
+
+    .mini-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .mini-stat {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 12px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .mini-stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .mini-stat-label {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .mini-status {
+      text-align: center;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+
+    .pulse-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mini-container">
+    <div class="mini-header">
+      <div class="mini-logo">∞</div>
+      <button class="mini-close" onclick="window.close()">✕</button>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-value" id="miniSongs">0</div>
+        <div class="mini-stat-label">Songs</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-value" id="miniSkips">0</div>
+        <div class="mini-stat-label">Skipped</div>
+      </div>
+    </div>
+
+    <div class="mini-status">
+      <span class="pulse-indicator"></span>
+      <span id="miniStatus">Active</span>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    async function updateMini() {
+      try {
+        const stats = await ipcRenderer.invoke('store-get', 'stats', {});
+        document.getElementById('miniSongs').textContent = stats.listened || 0;
+        document.getElementById('miniSkips').textContent = stats.skipped || 0;
+        
+        const enabled = await ipcRenderer.invoke('store-get', 'enabled', true);
+        document.getElementById('miniStatus').textContent = enabled ? 'Active' : 'Paused';
+      } catch (error) {
+        console.error('Error updating mini:', error);
+      }
+    }
+
+    updateMini();
+    setInterval(updateMini, 2000);
+  </script>
+</body>
+</html>

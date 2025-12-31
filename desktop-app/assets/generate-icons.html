@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icon</title>
+</head>
+<body>
+    <canvas id="icon" width="256" height="256"></canvas>
+    <canvas id="tray" width="32" height="32"></canvas>
+    <br>
+    <button onclick="downloadIcon()">Download Icon</button>
+    <button onclick="downloadTray()">Download Tray Icon</button>
+    
+    <script>
+        // Main Icon
+        const canvas = document.getElementById('icon');
+        const ctx = canvas.getContext('2d');
+        
+        // Gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 256, 256);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.roundRect(0, 0, 256, 256, 60);
+        ctx.fill();
+        
+        // Infinity symbol
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 140px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('∞', 128, 140);
+        
+        // Tray Icon
+        const trayCanvas = document.getElementById('tray');
+        const trayCtx = trayCanvas.getContext('2d');
+        
+        trayCtx.fillStyle = '#667eea';
+        trayCtx.beginPath();
+        trayCtx.arc(16, 16, 14, 0, Math.PI * 2);
+        trayCtx.fill();
+        
+        trayCtx.fillStyle = 'white';
+        trayCtx.font = 'bold 20px Arial';
+        trayCtx.textAlign = 'center';
+        trayCtx.textBaseline = 'middle';
+        trayCtx.fillText('∞', 16, 18);
+        
+        function downloadIcon() {
+            const link = document.createElement('a');
+            link.download = 'icon.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function downloadTray() {
+            const link = document.createElement('a');
+            link.download = 'tray-icon.png';
+            link.href = trayCanvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unloop - Music Discovery Desktop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo-section">
+        <div class="logo-icon">∞</div>
+        <h1 class="logo-text">Unloop</h1>
+      </div>
+      
+      <nav class="nav-menu">
+        <button class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="history">
+          <span class="nav-icon">📜</span>
+          <span class="nav-text">History</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </button>
+        <button class="nav-item" data-page="stats">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="quick-toggle">
+          <span class="toggle-label">Discovery Mode</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="masterToggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="version">v1.0.0</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Dashboard Page -->
+      <section class="page active" id="dashboard-page">
+        <header class="page-header">
+          <div>
+            <h2 class="page-title">Your Music Journey</h2>
+            <p class="page-subtitle">Real-time insights into your listening habits</p>
+          </div>
+          <div class="theme-switcher">
+            <button class="theme-btn" data-theme="dark">🌙</button>
+            <button class="theme-btn" data-theme="light">☀️</button>
+          </div>
+        </header>
+
+        <!-- Status Card -->
+        <div class="status-card">
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span class="status-text" id="statusText">Active & Protecting</span>
+          </div>
+          <div class="current-mode">
+            <span class="mode-label">Mode:</span>
+            <span class="mode-value" id="currentMode">Strict Discovery</span>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card primary">
+            <div class="stat-icon">🎵</div>
+            <div class="stat-content">
+              <div class="stat-value" id="songsPlayed">0</div>
+              <div class="stat-label">Songs Explored</div>
+              <div class="stat-trend">↑ This session</div>
+            </div>
+          </div>
+          
+          <div class="stat-card success">
+            <div class="stat-icon">🛡️</div>
+            <div class="stat-content">
+              <div class="stat-value" id="loopsPrevented">0</div>
+              <div class="stat-label">Loops Prevented</div>
+              <div class="stat-trend">Saved you time</div>
+            </div>
+          </div>
+          
+          <div class="stat-card info">
+            <div class="stat-icon">🎭</div>
+            <div class="stat-content">
+              <div class="stat-value" id="artistsFound">0</div>
+              <div class="stat-label">Artists Discovered</div>
+              <div class="stat-trend">Growing library</div>
+            </div>
+          </div>
+          
+          <div class="stat-card warning">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-content">
+              <div class="stat-value" id="listenTime">0h</div>
+              <div class="stat-label">Listening Time</div>
+              <div class="stat-trend">Keep vibing</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <h3 class="section-title">Recent Activity</h3>
+          <div class="activity-list" id="recentActivity">
+            <div class="activity-item empty">
+              <span class="activity-icon">🎧</span>
+              <span class="activity-text">Start playing music to see activity</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health Metrics -->
+        <div class="health-section">
+          <h3 class="section-title">Music Health Metrics</h3>
+          <div class="health-grid">
+            <div class="health-metric">
+              <div class="health-header">
+                <span class="health-icon">🌱</span>
+                <span class="health-title">Freshness</span>
+              </div>
+              <div class="health-bar">
+                <div class="health-fill" id="freshnessBar" style="width: 0%"></div>
+              </div>
+              <div class="health-value" id="freshnessValue">0%</div>
+            </div>
+            
+            <div class="health-metric">
+              <div class="health-header">
+                <span class="health-icon">🧠</span>
+                <span class="health-title">Intelligence</span>
+              </div>
+              <div class="health-bar">
+                <div class="health-fill intelligence" id="intelligenceBar" style="width: 0%"></div>
+              </div>
+              <div class="health-value" id="intelligenceValue">0%</div>
+            </div>
+            
+            <div class="health-metric">
+              <div class="health-header">
+                <span class="health-icon">🎨</span>
+                <span class="health-title">Variety</span>
+              </div>
+              <div class="health-bar">
+                <div class="health-fill variety" id="varietyBar" style="width: 0%"></div>
+              </div>
+              <div class="health-value" id="varietyValue">0%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Page -->
+      <section class="page" id="history-page">
+        <header class="page-header">
+          <h2 class="page-title">Listening History</h2>
+          <div class="page-actions">
+            <input type="text" class="search-input" placeholder="Search songs..." id="historySearch">
+            <button class="action-btn" id="exportBtn">📥 Export CSV</button>
+            <button class="action-btn" id="clearHistoryBtn">🗑️ Clear</button>
+          </div>
+        </header>
+
+        <div class="history-stats">
+          <div class="history-stat">
+            <span class="history-stat-label">Total Songs:</span>
+            <span class="history-stat-value" id="totalSongs">0</span>
+          </div>
+          <div class="history-stat">
+            <span class="history-stat-label">Total Plays:</span>
+            <span class="history-stat-value" id="totalPlays">0</span>
+          </div>
+          <div class="history-stat">
+            <span class="history-stat-label">Most Played:</span>
+            <span class="history-stat-value" id="mostPlayed">-</span>
+          </div>
+        </div>
+
+        <div class="history-list" id="historyList">
+          <div class="empty-state">
+            <span class="empty-icon">📭</span>
+            <p>No history yet. Start listening to music!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Page -->
+      <section class="page" id="settings-page">
+        <header class="page-header">
+          <h2 class="page-title">Settings</h2>
+        </header>
+
+        <div class="settings-container">
+          
+          <!-- Discovery Mode -->
+          <div class="settings-group">
+            <h3 class="settings-group-title">Discovery Mode</h3>
+            
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Mode Type</span>
+                <span class="setting-desc">How strict should Unloop be?</span>
+              </label>
+              <select class="setting-select" id="modeSelect">
+                <option value="strict">Strict - Never repeat</option>
+                <option value="memory-fade">Memory Fade - Forget after time</option>
+                <option value="semi-strict">Semi-Strict - Allow after X songs</option>
+                <option value="artist-smart">Artist Smart - Variety by artist</option>
+              </select>
+            </div>
+
+            <div class="setting-item" id="memoryFadeSetting" style="display: none;">
+              <label class="setting-label">
+                <span class="setting-name">Memory Fade Hours</span>
+                <span class="setting-desc">Forget songs after this many hours</span>
+              </label>
+              <input type="number" class="setting-input" id="memoryFadeHours" min="1" max="720" value="72">
+            </div>
+
+            <div class="setting-item" id="semiStrictSetting" style="display: none;">
+              <label class="setting-label">
+                <span class="setting-name">Songs Before Repeat</span>
+                <span class="setting-desc">How many new songs before allowing repeats</span>
+              </label>
+              <input type="number" class="setting-input" id="songsBeforeRepeat" min="3" max="100" value="5">
+            </div>
+
+            <div class="setting-item" id="artistSmartSetting" style="display: none;">
+              <label class="setting-label">
+                <span class="setting-name">Max Artist Per Session</span>
+                <span class="setting-desc">Maximum plays from same artist per session</span>
+              </label>
+              <input type="number" class="setting-input" id="maxArtistPerSession" min="1" max="10" value="3">
+            </div>
+          </div>
+
+          <!-- Appearance -->
+          <div class="settings-group">
+            <h3 class="settings-group-title">Appearance</h3>
+            
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Theme</span>
+                <span class="setting-desc">Choose your preferred theme</span>
+              </label>
+              <select class="setting-select" id="themeSelect">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="auto">Auto (System)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Minimal Mode</span>
+                <span class="setting-desc">Simplified interface</span>
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="minimalMode">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div class="settings-group">
+            <h3 class="settings-group-title">Notifications</h3>
+            
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Desktop Notifications</span>
+                <span class="setting-desc">Show notifications when skipping</span>
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="desktopNotifications" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Sound Effects</span>
+                <span class="setting-desc">Play sounds for actions</span>
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="soundEffects">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Advanced -->
+          <div class="settings-group">
+            <h3 class="settings-group-title">Advanced</h3>
+            
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Always on Top</span>
+                <span class="setting-desc">Keep window above others</span>
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="alwaysOnTop">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <label class="setting-label">
+                <span class="setting-name">Start with Windows</span>
+                <span class="setting-desc">Launch Unloop on startup</span>
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="startWithWindows">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-actions">
+            <button class="btn-primary" id="saveSettings">Save Settings</button>
+            <button class="btn-secondary" id="resetSettings">Reset to Default</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Page -->
+      <section class="page" id="stats-page">
+        <header class="page-header">
+          <h2 class="page-title">Analytics & Insights</h2>
+        </header>
+
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3 class="analytics-title">Top Artists</h3>
+            <div class="top-list" id="topArtists">
+              <div class="empty-state-small">No data yet</div>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <h3 class="analytics-title">Top Songs</h3>
+            <div class="top-list" id="topSongs">
+              <div class="empty-state-small">No data yet</div>
+            </div>
+          </div>
+
+          <div class="analytics-card full-width">
+            <h3 class="analytics-title">Listening Patterns</h3>
+            <div class="chart-container">
+              <canvas id="listeningChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
