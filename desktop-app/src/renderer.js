@@ -642,5 +642,152 @@ if (Notification.permission === 'default') {
   Notification.requestPermission();
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', init);
+// ═══════════════════════════════════════════════════════════════
+// AUDIO LISTENER INTEGRATION
+// ═══════════════════════════════════════════════════════════════
+
+let audioListener = null;
+let loopsDetectedCount = 0;
+
+function initAudioListener() {
+  audioListener = new AudioListener();
+  
+  const startBtn = document.getElementById('startListeningBtn');
+  const stopBtn = document.getElementById('stopListeningBtn');
+  const clearBtn = document.getElementById('clearDataBtn');
+  
+  // Callbacks for audio detection
+  audioListener.onSongDetected = (data) => {
+    updateListenerStats();
+    addDetectionLog('detection', `Audio detected - Energy: ${data.energy}`, data.timestamp);
+  };
+  
+  audioListener.onLoopDetected = (data) => {
+    loopsDetectedCount++;
+    updateListenerStats();
+    addDetectionLog('loop', `🔁 ${data.message}`, data.timestamp, data.similarity);
+    
+    // Show notification
+    if (state.settings.desktopNotifications) {
+      new Notification('Loop Detected!', {
+        body: `Song is repeating (${data.similarity}% match)`,
+        icon: 'icon.png'
+      });
+    }
+  };
+  
+  startBtn.addEventListener('click', async () => {
+    const result = await audioListener.startListening();
+    
+    if (result.success) {
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'flex';
+      updateListenerStatus(true);
+      addDetectionLog('info', '✅ Audio listening started successfully');
+      
+      // Update stats periodically
+      setInterval(() => {
+        if (audioListener.isListening) {
+          updateListenerStats();
+        }
+      }, 500);
+    } else {
+      alert(`Failed to start listening: ${result.message}\n\nPlease allow microphone access in your system settings.`);
+      addDetectionLog('error', `❌ ${result.message}`);
+    }
+  });
+  
+  stopBtn.addEventListener('click', () => {
+    const result = audioListener.stopListening();
+    startBtn.style.display = 'flex';
+    stopBtn.style.display = 'none';
+    updateListenerStatus(false);
+    addDetectionLog('info', '⏸️ Audio listening stopped');
+  });
+  
+  clearBtn.addEventListener('click', () => {
+    audioListener.clearFingerprints();
+    loopsDetectedCount = 0;
+    updateListenerStats();
+    clearDetectionLog();
+    addDetectionLog('info', '🗑️ Data cleared');
+  });
+}
+
+function updateListenerStatus(isOnline) {
+  const statusIndicator = document.getElementById('listenerStatus');
+  const statusDot = statusIndicator.querySelector('.status-dot');
+  const statusText = statusIndicator.querySelector('.status-text');
+  
+  if (isOnline) {
+    statusDot.classList.remove('offline');
+    statusDot.classList.add('online');
+    statusText.textContent = 'Listening...';
+  } else {
+    statusDot.classList.remove('online');
+    statusDot.classList.add('offline');
+    statusText.textContent = 'Offline';
+  }
+}
+
+function updateListenerStats() {
+  if (!audioListener) return;
+  
+  const status = audioListener.getStatus();
+  const volume = Math.round(status.currentVolume * 2); // Scale to 0-200
+  
+  // Update volume bar
+  document.getElementById('volumeLevel').style.width = `${Math.min(volume, 100)}%`;
+  document.getElementById('volumePercent').textContent = `${Math.min(volume, 100)}%`;
+  
+  // Update samples
+  document.getElementById('samplesCollected').textContent = status.fingerprintsCollected;
+  
+  // Update loops
+  document.getElementById('loopsDetected').textContent = loopsDetectedCount;
+}
+
+function addDetectionLog(type, message, timestamp = Date.now(), similarity = null) {
+  const logContainer = document.getElementById('detectionLog');
+  
+  // Remove empty state
+  const emptyState = logContainer.querySelector('.empty');
+  if (emptyState) {
+    emptyState.remove();
+  }
+  
+  const logItem = document.createElement('div');
+  logItem.className = `log-item ${type}`;
+  
+  const icon = type === 'loop' ? '🔁' : type === 'detection' ? '🎵' : type === 'info' ? 'ℹ️' : '❌';
+  const time = new Date(timestamp).toLocaleTimeString();
+  
+  logItem.innerHTML = `
+    <span class="log-icon">${icon}</span>
+    <span class="log-text">${message}</span>
+    ${similarity ? `<span class="log-similarity">${similarity}%</span>` : ''}
+    <span class="log-time">${time}</span>
+  `;
+  
+  // Add at the top
+  logContainer.insertBefore(logItem, logContainer.firstChild);
+  
+  // Keep only last 50 logs
+  const logs = logContainer.querySelectorAll('.log-item');
+  if (logs.length > 50) {
+    logs[logs.length - 1].remove();
+  }
+}
+
+function clearDetectionLog() {
+  const logContainer = document.getElementById('detectionLog');
+  logContainer.innerHTML = '<div class="log-item empty"><span class="log-icon">👂</span><span class="log-text">Listening for audio...</span></div>';
+}
+
+// Initialize audio listener when page loads
+setTimeout(() => {
+  if (typeof AudioListener !== 'undefined') {
+    initAudioListener();
+  }
+}, 1000);
+

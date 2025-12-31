@@ -33,6 +33,10 @@
           <span class="nav-icon">📈</span>
           <span class="nav-text">Analytics</span>
         </button>
+        <button class="nav-item" data-page="listener">
+          <span class="nav-icon">🎤</span>
+          <span class="nav-text">Audio Listener</span>
+        </button>
       </nav>
       
       <div class="sidebar-footer">
@@ -368,9 +372,87 @@
         </div>
       </section>
 
+      <!-- Audio Listener Page -->
+      <section class="page-content" id="listener-page" style="display: none;">
+        <div class="page-header">
+          <h2 class="page-title">🎤 Audio Listener</h2>
+          <p class="page-subtitle">Automatic song detection and loop monitoring</p>
+        </div>
+
+        <div class="listener-control-section">
+          <div class="listener-status-card">
+            <div class="status-indicator" id="listenerStatus">
+              <div class="status-dot offline"></div>
+              <span class="status-text">Offline</span>
+            </div>
+            
+            <div class="listener-stats">
+              <div class="listener-stat">
+                <span class="stat-label-small">Volume Level</span>
+                <div class="volume-bar">
+                  <div class="volume-fill" id="volumeLevel" style="width: 0%"></div>
+                </div>
+                <span class="volume-percent" id="volumePercent">0%</span>
+              </div>
+              
+              <div class="listener-stat">
+                <span class="stat-label-small">Audio Samples</span>
+                <span class="stat-value-large" id="samplesCollected">0</span>
+              </div>
+
+              <div class="listener-stat">
+                <span class="stat-label-small">Loops Detected</span>
+                <span class="stat-value-large" id="loopsDetected">0</span>
+              </div>
+            </div>
+
+            <div class="listener-controls">
+              <button class="btn-primary" id="startListeningBtn">
+                <span class="btn-icon">▶️</span>
+                Start Listening
+              </button>
+              <button class="btn-secondary" id="stopListeningBtn" style="display: none;">
+                <span class="btn-icon">⏸️</span>
+                Stop Listening
+              </button>
+              <button class="btn-secondary" id="clearDataBtn">
+                <span class="btn-icon">🗑️</span>
+                Clear Data
+              </button>
+            </div>
+          </div>
+
+          <div class="permission-info-card">
+            <h3 class="info-title">📋 How it Works</h3>
+            <ul class="info-list">
+              <li><strong>Microphone Access:</strong> Listens to audio playing on your device</li>
+              <li><strong>Pattern Detection:</strong> Creates audio fingerprints every 2 seconds</li>
+              <li><strong>Loop Detection:</strong> Automatically detects when songs repeat (85%+ similarity)</li>
+              <li><strong>Privacy First:</strong> All processing happens locally, no data sent anywhere</li>
+              <li><strong>Always Running:</strong> Works in background like Shazam</li>
+            </ul>
+            
+            <div class="permission-warning">
+              ⚠️ <strong>Permission Required:</strong> Click "Start Listening" and allow microphone access when prompted
+            </div>
+          </div>
+        </div>
+
+        <div class="detection-log-section">
+          <h3 class="section-title">Detection Log</h3>
+          <div class="log-container" id="detectionLog">
+            <div class="log-item empty">
+              <span class="log-icon">👂</span>
+              <span class="log-text">Start listening to see detections</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
+  <script src="audio-listener.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>
