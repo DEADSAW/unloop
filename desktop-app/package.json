@@ -30,13 +30,31 @@
     },
     "win": {
       "target": ["nsis"],
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "asInvoker",
+      "signingHashAlgorithms": []
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
+      "createStartMenuShortcut": true,
+      "include": "installer.nsh"
+    },
+    "extraResources": [
+      {
+        "from": "../",
+        "to": "extension",
+        "filter": [
+          "manifest.json",
+          "background.js",
+          "content.js",
+          "popup/**",
+          "icons/**",
+          "toast.css",
+          "assets/**"
+        ]
+      }
+    ]
   }
 }
