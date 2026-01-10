@@ -7,6 +7,8 @@
 
 ![Version](https://img.shields.io/badge/version-1.0.0-6366f1?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Chrome-Extension-brightgreen?style=for-the-badge&logo=googlechrome)
+![Platform](https://img.shields.io/badge/Android-App-3DDC84?style=for-the-badge&logo=android)
+![Platform](https://img.shields.io/badge/Windows-Desktop-0078D6?style=for-the-badge&logo=windows)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 ![Privacy](https://img.shields.io/badge/100%25-Private-purple?style=for-the-badge&logo=security)
 
@@ -14,7 +16,9 @@
 
 ### 🎧 **Stop wasting time on repeats. Start discovering your next favorite song.**
 
-[🚀 Quick Start](#-installation) • [✨ Features](#-features) • [🧠 How It Works](#-how-it-works) • [📊 Use Cases](#-use-cases)
+**Available on:** 🌐 Chrome Extension • 📱 Android App • 💻 Windows Desktop
+
+[🚀 Quick Start](#-installation) • [✨ Features](#-features) • [📱 Platforms](#-platform-availability) • [🧠 How It Works](#-how-it-works) • [📊 Use Cases](#-use-cases)
 
 </div>
 
@@ -373,6 +377,64 @@ Next Milestone:
 
 ---
 
+## 📱 Platform Availability
+
+Unloop is available across multiple platforms to fit your music listening lifestyle:
+
+<table>
+<tr>
+<td width="33%" align="center">
+
+### 🌐 **Chrome Extension**
+
+<img src="https://github.com/user-attachments/assets/118555ff-d164-4175-a327-3ac314d28ee9" width="250" alt="Chrome Extension"/>
+
+**Best for:** Desktop web browsing
+- YouTube & YouTube Music
+- Spotify Web Player
+- Full-featured dashboard
+- 5 intelligent modes
+- Export/Import data
+
+[📥 Install Extension](#option-2-manual-installation-available-now)
+
+</td>
+<td width="33%" align="center">
+
+### 📱 **Android App**
+
+<img src="android-app/screenshots/app_main.png" width="250" alt="Android App"/>
+
+**Best for:** Mobile listening
+- Works with any music app
+- Auto-skip via accessibility
+- Beautiful Material 3 design
+- Listening stats & history
+- 100% offline & private
+
+[📥 Install Android App](#option-3-android-app-available-now)
+
+</td>
+<td width="33%" align="center">
+
+### 💻 **Windows Desktop**
+
+**Best for:** Power users & analysts
+- System-wide monitoring
+- Advanced analytics
+- Mini player mode
+- Global hotkeys
+- Always-on-top mode
+- Detailed statistics
+
+[📥 Install Desktop App](#option-4-windows-desktop-available-now)
+
+</td>
+</tr>
+</table>
+
+---
+
 ## 🚀 Installation
 
 ### **Option 1: Chrome Web Store** *(Coming Soon)*
@@ -382,7 +444,7 @@ Next Milestone:
 
 1. **Download** this repository
    ```bash
-   git clone https://github.com/yourusername/unloop.git
+   git clone https://github.com/DEADSAW/unloop.git
    cd unloop
    ```
 
@@ -403,6 +465,72 @@ Next Milestone:
    - Click the Unloop icon in your toolbar
    - Choose your discovery mode
    - Let the magic begin! 🎵
+
+---
+
+### **Option 3: Android App** *(Available Now)*
+
+1. **Download & Install**
+   ```bash
+   # Clone the repository
+   git clone https://github.com/DEADSAW/unloop.git
+   cd unloop/android-app
+   ```
+
+2. **Build the APK**
+   - Open the `android-app` folder in Android Studio
+   - Build → Build Bundle(s) / APK(s) → Build APK(s)
+   - Install the generated APK on your device
+
+   *Or use command line:*
+   ```bash
+   ./gradlew assembleDebug
+   ```
+
+3. **Grant Permissions**
+   After installation, enable these permissions:
+   - **Accessibility Service** - For auto-skip functionality
+   - **Notification Access** - To detect currently playing songs
+
+4. **Start Using**
+   - Open the Unloop app
+   - Enable the service
+   - Play music on Spotify, YouTube Music, or any music app
+   - Enjoy automatic skip of repeated songs! 🎵
+
+**Requirements:** Android 8.0+ (API 26)
+
+---
+
+### **Option 4: Windows Desktop** *(Available Now)*
+
+1. **Download & Setup**
+   ```bash
+   # Clone the repository
+   git clone https://github.com/DEADSAW/unloop.git
+   cd unloop/desktop-app
+   npm install
+   ```
+
+2. **Run the Application**
+   ```bash
+   npm start
+   ```
+
+   *Or build an installer:*
+   ```bash
+   npm run build
+   ```
+   The installer will be in the `dist` folder.
+
+3. **Configure & Use**
+   - The app appears in your system tray
+   - Use **Ctrl+Shift+U** to toggle the main window
+   - Use **Ctrl+Shift+M** for mini player mode
+   - Configure your discovery preferences
+   - Track your listening across all platforms! 🎵
+
+**Requirements:** Windows 10+ with Node.js 16+
 
 ---
 
@@ -702,6 +830,38 @@ allow("Smart choice ✨");
 
 ---
 
+## 🎯 Which Platform Should You Choose?
+
+<table>
+<tr>
+<th>Your Situation</th>
+<th>Best Platform</th>
+<th>Why?</th>
+</tr>
+<tr>
+<td>🖥️ I mainly listen on desktop browser</td>
+<td><strong>Chrome Extension</strong></td>
+<td>Full-featured, works directly in YouTube/Spotify web</td>
+</tr>
+<tr>
+<td>📱 I listen on my phone with apps</td>
+<td><strong>Android App</strong></td>
+<td>Works with any music app, no browser needed</td>
+</tr>
+<tr>
+<td>💼 I want system-wide monitoring</td>
+<td><strong>Desktop App</strong></td>
+<td>Advanced analytics, global hotkeys, mini player</td>
+</tr>
+<tr>
+<td>🌍 I use multiple platforms</td>
+<td><strong>All Three!</strong></td>
+<td>Each tracks independently, export/import data to sync</td>
+</tr>
+</table>
+
+---
+
 ## 📊 Use Cases
 
 ### **🎭 Mode Comparison at a Glance**
@@ -828,31 +988,38 @@ allow("Smart choice ✨");
 
 ```
 unloop/
-├── 📜 manifest.json          # Extension configuration & permissions
-├── 🧠 background.js          # Service worker - data persistence
-├── ⚙️ content.js             # Main engine - song detection & skip logic
-├── 🎨 toast.css              # Toast notification styles
+├── 📂 Chrome Extension (Web)
+│   ├── 📜 manifest.json          # Extension configuration & permissions
+│   ├── 🧠 background.js          # Service worker - data persistence
+│   ├── ⚙️ content.js             # Main engine - song detection & skip logic
+│   ├── 🎨 toast.css              # Toast notification styles
+│   ├── 📂 popup/
+│   │   ├── popup.html            # Extension dashboard UI
+│   │   ├── popup.css             # Beautiful gradients & animations
+│   │   └── popup.js              # Settings logic & stats rendering
+│   ├── 📂 icons/                 # Extension icons
+│   └── 📂 assets/                # Libraries (Chart.js)
 │
-├── 📂 popup/
-│   ├── popup.html            # Extension dashboard UI
-│   ├── popup.css             # Beautiful gradients & animations
-│   └── popup.js              # Settings logic & stats rendering
+├── 📂 android-app/               # Native Android Application
+│   ├── 📂 app/src/main/
+│   │   ├── MainActivity.kt       # Main UI
+│   │   ├── 📂 data/              # Room database & models
+│   │   └── 📂 service/           # Notification listener & accessibility
+│   ├── 📂 screenshots/           # App screenshots
+│   ├── build.gradle.kts          # Build configuration
+│   └── README.md                 # Android-specific docs
 │
-├── 📂 icons/
-│   ├── icon16.png            # Toolbar icon
-│   ├── icon32.png            # Extension list
-│   ├── icon48.png            # Extensions page
-│   ├── icon128.png           # Chrome Web Store
-│   └── generate-icons.html   # Icon generator tool
+├── 📂 desktop-app/               # Windows Desktop Application
+│   ├── main.js                   # Electron main process
+│   ├── 📂 src/
+│   │   ├── index.html            # Main UI
+│   │   ├── renderer.js           # UI logic
+│   │   ├── smart-engine.js       # Analytics engine
+│   │   └── mini.html             # Mini player
+│   ├── package.json              # Dependencies
+│   └── README.md                 # Desktop-specific docs
 │
-├── 📂 assets/
-│   └── chart.js              # Stats visualization library
-│
-└── 📂 docs/
-    ├── FEATURES_IMPLEMENTED.md
-    ├── SMART_AUTO_IMPLEMENTATION.md
-    ├── TESTING_GUIDE.md
-    └── QUICK_START.md
+└── 📜 README.md                  # Main documentation (this file)
 ```
 
 ### **Component Breakdown**
@@ -927,22 +1094,32 @@ Dashboard interface controller. Features:
 
 <table>
 <tr>
-<td width="50%">
+<td width="33%">
 
-#### **Frontend**
-- **HTML5** - Semantic markup
-- **CSS3** - Custom properties, animations
-- **Vanilla JavaScript** - Zero dependencies (core)
+#### **🌐 Chrome Extension**
+- **HTML5 & CSS3** - Modern UI
+- **Vanilla JavaScript** - Zero dependencies
 - **Chart.js** - Stats visualization
+- **Chrome APIs** - Storage & messaging
 
 </td>
-<td width="50%">
+<td width="33%">
 
-#### **Chrome APIs**
-- **chrome.storage.local** - Persistent data
-- **chrome.storage.session** - Session tracking
-- **chrome.runtime** - Message passing
-- **chrome.scripting** - Content injection
+#### **📱 Android App**
+- **Kotlin** - Modern Android development
+- **Material 3** - Beautiful UI components
+- **Room Database** - Local data persistence
+- **Coroutines** - Async operations
+- **Accessibility API** - Auto-skip functionality
+
+</td>
+<td width="33%">
+
+#### **💻 Desktop App**
+- **Electron** - Cross-platform framework
+- **Node.js** - Backend runtime
+- **electron-store** - Persistent storage
+- **Vanilla JavaScript** - Lightweight core
 
 </td>
 </tr>
@@ -1347,12 +1524,19 @@ Your listening history never leaves your computer. Ever.
 <details>
 <summary><strong>📱 Does this work on mobile?</strong></summary>
 
-Not yet. Chrome extensions on mobile have limited capabilities. However, we're exploring:
-- Native mobile apps (iOS/Android)
-- Mobile browser extensions (Firefox, Kiwi Browser)
-- Web app version
+**Yes!** We now have a native Android app available!
 
-Follow the repo for updates! 🚀
+✅ **Android App** (Available Now)
+- Works with any music app (Spotify, YouTube Music, etc.)
+- Auto-skip via accessibility service
+- Beautiful Material 3 design
+- See [Android Installation](#option-3-android-app-available-now)
+
+🔄 **iOS** (Coming Soon)
+- Native iOS app in development
+- Expected: Q2 2026
+
+The Chrome extension is currently desktop-only, but our Android app provides the same core functionality for mobile users.
 
 </details>
 
@@ -1424,12 +1608,13 @@ Each device has its own independent history (no cloud sync).
 
 Thanks for helping improve Unloop! 
 
-1. [Open an issue](https://github.com/yourusername/unloop/issues)
+1. [Open an issue](https://github.com/DEADSAW/unloop/issues)
 2. Include:
-   - Browser version
-   - Extension version
+   - Platform (Chrome/Android/Desktop)
+   - Browser/OS version
+   - Extension/App version
    - Steps to reproduce
-   - Console errors (press F12)
+   - Console errors (press F12 for web)
    - Screenshot if applicable
 
 We'll fix it ASAP! 🚀
@@ -1439,10 +1624,11 @@ We'll fix it ASAP! 🚀
 <details>
 <summary><strong>💡 Can I request a feature?</strong></summary>
 
-Absolutely! [Create a feature request](https://github.com/yourusername/unloop/issues) and describe:
+Absolutely! [Create a feature request](https://github.com/DEADSAW/unloop/issues) and describe:
 - What you want
 - Why it's useful
 - How you'd use it
+- Which platform(s) it applies to
 
 Popular requests get prioritized. Community votes help too! ⭐
 
@@ -1566,14 +1752,17 @@ This happens when YouTube Music navigates to a new page:<br>
 - ✅ Theme customization
 - ✅ Achievement system
 - ✅ CSV export
+- ✅ **Android app (NEW!)**
+- ✅ **Windows desktop app (NEW!)**
 
 ### **🔜 Version 1.1** (Q1 2026)
 - 🔄 Spotify full support (currently beta)
-- 📱 Mobile companion app
+- 📱 iOS companion app
 - 🌐 Multi-language support
 - 📊 Advanced analytics graphs
 - 🎵 Genre-based discovery modes
 - ☁️ Optional cloud backup
+- 🔗 Cross-platform sync
 
 ### **💭 Version 2.0** (Future)
 - 🤝 Social features (share discoveries)
@@ -1590,14 +1779,14 @@ This happens when YouTube Music navigates to a new page:<br>
 We welcome contributions! Here's how:
 
 ### **🐛 Report Bugs**
-[Open an issue](https://github.com/yourusername/unloop/issues) with:
-- Browser version
-- Extension version
+[Open an issue](https://github.com/DEADSAW/unloop/issues) with:
+- Browser/Platform version
+- Extension/App version
 - Steps to reproduce
-- Console errors (F12)
+- Console errors (if applicable)
 
 ### **💡 Suggest Features**
-Have an idea? [Create a feature request](https://github.com/yourusername/unloop/issues)
+Have an idea? [Create a feature request](https://github.com/DEADSAW/unloop/issues)
 
 ### **🔧 Submit Pull Requests**
 1. Fork the repo
@@ -1628,29 +1817,45 @@ See [LICENSE](LICENSE) file for details.
 
 ---
 
+## 👨‍💻 Author
+
+<div align="center">
+
+<img src="https://github.com/DEADSAW.png" width="100" style="border-radius: 50%;" alt="Sangam Rai"/>
+
+### **Sangam Rai**
+
+[![GitHub](https://img.shields.io/badge/GitHub-DEADSAW-181717?style=for-the-badge&logo=github)](https://github.com/DEADSAW)
+
+*Passionate about music discovery, clean code, and building tools that enhance everyday experiences.*
+
+</div>
+
+---
+
 ## 📞 Support & Community
 
 <table>
 <tr>
 <td width="25%" align="center">
 <h3>💬</h3>
-<a href="https://github.com/yourusername/unloop/discussions"><strong>Discussions</strong></a><br>
+<a href="https://github.com/DEADSAW/unloop/discussions"><strong>Discussions</strong></a><br>
 Ask questions & share tips
 </td>
 <td width="25%" align="center">
 <h3>🐛</h3>
-<a href="https://github.com/yourusername/unloop/issues"><strong>Issues</strong></a><br>
+<a href="https://github.com/DEADSAW/unloop/issues"><strong>Issues</strong></a><br>
 Report bugs & request features
 </td>
 <td width="25%" align="center">
 <h3>⭐</h3>
-<a href="https://github.com/yourusername/unloop"><strong>Star on GitHub</strong></a><br>
+<a href="https://github.com/DEADSAW/unloop"><strong>Star on GitHub</strong></a><br>
 Show your support!
 </td>
 <td width="25%" align="center">
 <h3>📧</h3>
-<strong>Email</strong><br>
-unloop@yourproject.com
+<strong>Contact</strong><br>
+Via GitHub Issues
 </td>
 </tr>
 </table>
@@ -1663,90 +1868,15 @@ unloop@yourproject.com
 
 *Because life's too short for boring repeats.*
 
-**[⬇️ Download Now](#-installation)** • **[📖 Read Docs](QUICK_START.md)** • **[⭐ Star on GitHub](https://github.com/yourusername/unloop)**
+**[⬇️ Download Now](#-installation)** • **[📖 Read Docs](QUICK_START.md)** • **[⭐ Star on GitHub](https://github.com/DEADSAW/unloop)**
 
 ---
 
-Made with 💜 by music lovers, for music lovers.
+**Made with 💜 by [Sangam Rai](https://github.com/DEADSAW)**
 
-**Version 1.0.0** • Last updated: December 2025
+*For music lovers, by music lovers.*
+
+**Version 1.0.0** • Last updated: January 2026
 
 </div>
-- [ ] New song plays normally
-- [ ] Repeated song gets skipped
-- [ ] Toggle on/off works
-- [ ] Mode switching works
-- [ ] Stats update correctly
-- [ ] Export/Import works
-- [ ] Clear history works
-- [ ] Persists across browser restarts
 
----
-
-## ⚙️ How It Works
-
-```
-┌──────────────────────────────────────────────────────┐
-│                    Content Script                     │
-│  ┌─────────────┐    ┌─────────────┐    ┌──────────┐ │
-│  │ Detect Song │ -> │ Check Store │ -> │ Skip or  │ │
-│  │   Change    │    │   History   │    │  Allow   │ │
-│  └─────────────┘    └─────────────┘    └──────────┘ │
-└──────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────┐
-│              chrome.storage.local                     │
-│  ┌─────────────────────────────────────────────────┐ │
-│  │ { videoId: { timestamp, artist, title, count } }│ │
-│  └─────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────┘
-```
-
----
-
-## 🛠️ Tech Stack
-
-- **Manifest V3** - Latest Chrome extension standard
-- **Vanilla JavaScript** - No frameworks, fast & lightweight
-- **chrome.storage.local** - Persistent local storage
-- **MutationObserver** - Efficient DOM change detection
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Whitelist favorite songs (never skip these)
-- [ ] Blacklist songs (always skip these)
-- [ ] Cloud sync via Google account
-- [ ] Firefox support
-- [ ] Spotify support
-- [ ] Listening insights/analytics
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-- Report bugs
-- Suggest features
-- Submit pull requests
-
----
-
-## 📜 License
-
-MIT License - feel free to use, modify, and distribute.
-
----
-
-## 💜 Support
-
-If you find this useful:
-- ⭐ Star this repo
-- 📢 Share with friends
-- 🐛 Report issues
-
----
-
-**Made with ∞ for music lovers who crave discovery.**
