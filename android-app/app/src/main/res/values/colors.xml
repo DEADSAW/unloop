@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Premium Dark Theme - Modern Glassmorphism -->
+    
+    <!-- Background Colors -->
+    <color name="background">#080810</color>
+    <color name="surface">#0F0F18</color>
+    <color name="surface_elevated">#16161F</color>
+    <color name="card_background">#1A1A25</color>
+    <color name="card_border">#2A2A3A</color>
+    
+    <!-- Primary Gradient (Purple → Cyan) -->
+    <color name="primary">#8B5CF6</color>
+    <color name="primary_dark">#7C3AED</color>
+    <color name="primary_light">#A78BFA</color>
+    
+    <!-- Accent -->
+    <color name="accent">#06B6D4</color>
+    <color name="accent_dark">#0891B2</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#8B5CF6</color>
+    <color name="gradient_middle">#6366F1</color>
+    <color name="gradient_end">#06B6D4</color>
+    
+    <!-- Glow Effects -->
+    <color name="glow_purple">#338B5CF6</color>
+    <color name="glow_cyan">#3306B6D4</color>
+    
+    <!-- Text Colors -->
+    <color name="on_surface">#FFFFFF</color>
+    <color name="on_surface_secondary">#94A3B8</color>
+    <color name="on_surface_tertiary">#64748B</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+    <color name="error">#EF4444</color>
+    <color name="info">#3B82F6</color>
+    
+    <!-- Basic Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    
+    <!-- Mode Colors - Vibrant -->
+    <color name="mode_smart_auto">#8B5CF6</color>
+    <color name="mode_strict">#EF4444</color>
+    <color name="mode_memory_fade">#3B82F6</color>
+    <color name="mode_semi_strict">#10B981</color>
+    <color name="mode_artist_smart">#F59E0B</color>
+    
+    <!-- Stats Card Colors -->
+    <color name="stat_songs">#8B5CF6</color>
+    <color name="stat_loops">#10B981</color>
+    <color name="stat_time">#06B6D4</color>
+    <color name="stat_artists">#F59E0B</color>
+    
+    <!-- Glass Effect -->
+    <color name="glass_bg">#1A1A2580</color>
+    <color name="glass_border">#FFFFFF15</color>
+</resources>

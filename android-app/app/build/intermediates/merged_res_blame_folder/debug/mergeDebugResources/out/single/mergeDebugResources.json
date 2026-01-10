@@ -1,0 +1,50 @@
+[
+    {
+        "merged": "com.unloop.app-debug-41:/drawable_card_glass.xml.flat",
+        "source": "com.unloop.app-main-43:/drawable/card_glass.xml"
+    },
+    {
+        "merged": "com.unloop.app-debug-41:/drawable_gradient_primary.xml.flat",
+        "source": "com.unloop.app-main-43:/drawable/gradient_primary.xml"
+    },
+    {
+        "merged": "com.unloop.app-debug-41:/drawable_btn_gradient.xml.flat",
+        "source": "com.unloop.app-main-43:/drawable/btn_gradient.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\xml_accessibility_service_config.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\xml\\accessibility_service_config.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\drawable_ic_warning.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\drawable\\ic_warning.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\drawable_ic_check_circle.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\drawable\\ic_check_circle.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-debug-41:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.unloop.app-debug-41:/drawable_card_glow.xml.flat",
+        "source": "com.unloop.app-main-43:/drawable/card_glow.xml"
+    },
+    {
+        "merged": "com.unloop.app-debug-41:/layout_activity_main.xml.flat",
+        "source": "com.unloop.app-main-43:/layout/activity_main.xml"
+    }
+]
