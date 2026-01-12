@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
     private val database by lazy { UnloopDatabase.getDatabase(this) }
-    private val statsRepository by lazy { StatsRepository(this) }
+    private val statsRepository by lazy { StatsRepository.getInstance(this) }
     
     private val songSkippedReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -57,6 +57,11 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun setupUI() {
+        // Settings button
+        binding.btnSettings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
         // Main toggle
         binding.switchEnabled.isChecked = UnloopAccessibilityService.isEnabled
         binding.switchEnabled.setOnCheckedChangeListener { _, isChecked ->
@@ -77,14 +82,20 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
         
+        binding.btnGrantBattery.setOnClickListener {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            intent.data = android.net.Uri.parse("package:$packageName")
+            startActivity(intent)
+        }
+        
         // Skip history button
         binding.btnSkipHistory.setOnClickListener {
             showSkipHistoryDialog()
         }
         
-        // Export button
+        // Analytics button (was Export)
         binding.btnExportData.setOnClickListener {
-            Toast.makeText(this, "Export coming soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AnalyticsActivity::class.java))
         }
         
         // Clear data button
@@ -112,6 +123,15 @@ class MainActivity : AppCompatActivity() {
             if (accessibilityEnabled) View.GONE else View.VISIBLE
         binding.cardNotificationPermission.visibility = 
             if (notificationEnabled) View.GONE else View.VISIBLE
+            
+        val batteryOptDisabled = isBatteryOptimizationDisabled()
+        binding.cardBatteryPermission.visibility = 
+            if (batteryOptDisabled) View.GONE else View.VISIBLE
+    }
+    
+    private fun isBatteryOptimizationDisabled(): Boolean {
+        val pm = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        return pm.isIgnoringBatteryOptimizations(packageName)
     }
     
     private fun isAccessibilityServiceEnabled(): Boolean {

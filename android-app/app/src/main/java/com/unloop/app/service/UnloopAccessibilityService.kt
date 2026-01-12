@@ -27,10 +27,15 @@ import com.unloop.app.data.StatsRepository
 import com.unloop.app.data.UnloopDatabase
 import kotlinx.coroutines.*
 
+import com.unloop.app.data.PreferencesManager
+import kotlinx.coroutines.flow.first
+
 /**
- * Accessibility Service for auto-skip functionality
+ * Service to handle accessibility events for skipping songs
  */
 class UnloopAccessibilityService : AccessibilityService() {
+
+    private lateinit var prefs: PreferencesManager
     
     companion object {
         private const val TAG = "UnloopAccessibility"
@@ -85,9 +90,10 @@ class UnloopAccessibilityService : AccessibilityService() {
     private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val mainHandler = Handler(Looper.getMainLooper())
     private val database by lazy { UnloopDatabase.getDatabase(this) }
-    private val statsRepository by lazy { StatsRepository(this) }
+    private val statsRepository by lazy { StatsRepository.getInstance(this) }
     
     private var lastProcessedSongId: String? = null
+    private var lastSongStartTime: Long = 0
     private var recentArtists = mutableListOf<String>()
     private var newSongsSinceLastRepeat = 0
     
@@ -136,6 +142,11 @@ class UnloopAccessibilityService : AccessibilityService() {
         // Initialize managers for skip control
         mediaSessionManager = getSystemService(Context.MEDIA_SESSION_SERVICE) as? MediaSessionManager
         audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+        prefs = PreferencesManager(this)
+        
+        // Initialize notification
+        NotificationHelper.init(this)
+        NotificationHelper.showActive(this)
         
         val filter = IntentFilter(MusicNotificationListenerService.ACTION_SONG_DETECTED)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -143,8 +154,6 @@ class UnloopAccessibilityService : AccessibilityService() {
         } else {
             registerReceiver(songReceiver, filter)
         }
-        
-        Log.d(TAG, "UnloopAccessibilityService created - READY")
     }
     
     override fun onDestroy() {
@@ -173,36 +182,91 @@ class UnloopAccessibilityService : AccessibilityService() {
     
     private suspend fun checkAndSkipIfNeeded(songId: String, title: String, artist: String, platform: String) {
         if (!isEnabled || songId == lastProcessedSongId) return
+        
+        // 1. Record time for PREVIOUS song (if valid and not skipped)
+        val now = System.currentTimeMillis()
+        if (lastProcessedSongId != null && lastSongStartTime > 0) {
+             val duration = now - lastSongStartTime
+             // Cap at 20 mins to avoid idle time counting errors
+             if (duration < 20 * 60 * 1000) {
+                 statsRepository.recordListenTime(lastProcessedSongId!!, duration)
+             }
+        }
+        
         lastProcessedSongId = songId
         
         val dao = database.songDao()
         val song = dao.getSongById(songId)
         
-        // Whitelist check
-        if (song?.isWhitelisted == true) return
-        
-        // Blacklist check
+        // Whitelist Check
+        if (song?.isWhitelisted == true) {
+            statsRepository.incrementPlayCount(songId, title, artist, platform)
+            NotificationHelper.showNowPlaying(title, artist, isNew = false)
+            lastSongStartTime = now
+            return
+        }
+
+        // Blacklist Check
         if (song?.isBlacklisted == true) {
+            statsRepository.recordLoopAvoided(songId)
             triggerSkip(platform)
+            lastSongStartTime = 0
             return
         }
         
-        // NEW SONG - save and allow
+        // New Song (Unknown)
         if (song == null) {
-            dao.insertSong(Song(
-                id = songId,
-                title = title,
-                artist = artist,
-                platform = platform,
-                playCount = 1,
-                firstPlayedAt = System.currentTimeMillis(),
-                lastPlayedAt = System.currentTimeMillis()
-            ))
+            statsRepository.incrementPlayCount(songId, title, artist, platform)
+            NotificationHelper.showNowPlaying(title, artist, isNew = true)
+            lastSongStartTime = now
             return
         }
         
-        // KNOWN SONG = SKIP
-        triggerSkip(platform)
+        // KNOWN SONG - Check Mode Logic
+        val mode = prefs.discoveryMode.first()
+        var shouldSkip = false
+        var skipReason = "Repeat"
+
+        when (mode) {
+            DiscoveryMode.STRICT -> {
+                shouldSkip = true
+                skipReason = "Strict Mode"
+            }
+            DiscoveryMode.SEMI_STRICT -> { // Threshold
+                val threshold = prefs.skipThreshold.first()
+                if (song.playCount >= threshold) {
+                    shouldSkip = true
+                    skipReason = "Played ${song.playCount}/${threshold} times"
+                }
+            }
+            DiscoveryMode.MEMORY_FADE -> { // Time-based
+                val daysLimit = prefs.memoryFadeDays.first()
+                val msLimit = daysLimit * 24 * 60 * 60 * 1000L
+                val timeSince = System.currentTimeMillis() - song.lastPlayedAt
+                if (timeSince < msLimit) {
+                    shouldSkip = true
+                    skipReason = "Played recently (< $daysLimit days)"
+                }
+            }
+            DiscoveryMode.SMART_AUTO -> {
+                val (skip, reason) = shouldSkipSmartAuto(song, artist)
+                shouldSkip = skip
+                skipReason = reason
+            }
+            else -> shouldSkip = true
+        }
+        
+        if (shouldSkip) {
+            NotificationHelper.showSkipped(title, artist)
+            statsRepository.recordLoopAvoided(songId)
+            triggerSkip(platform)
+            lastSongStartTime = 0
+        } else {
+            // Allowed to play - update stats
+            statsRepository.incrementPlayCount(songId, title, artist, platform)
+            NotificationHelper.showNowPlaying(title, artist, isNew = false)
+            lastSongStartTime = now
+        }
     }
     
     private suspend fun shouldSkipSmartAuto(song: Song, artist: String): Pair<Boolean, String> {

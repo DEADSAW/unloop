@@ -1,9 +1,20 @@
 -- Merging decision tree log ---
+provider#androidx.core.content.FileProvider
+INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:48:9-56:20
+	android:grantUriPermissions
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:52:13-47
+	android:authorities
+		INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:50:13-60
+	android:exported
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:51:13-37
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:49:13-62
 manifest
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-57:12
-INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-57:12
-INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-57:12
-INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-57:12
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-106:12
+INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-106:12
+INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-106:12
+INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:2:1-106:12
 MERGED from [androidx.databinding:viewbinding:8.13.2] C:\Users\Sangam\.gradle\caches\8.13\transforms\2c48cb5317098618ef4ce38ea4f84a76\transformed\viewbinding-8.13.2\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\Sangam\.gradle\caches\8.13\transforms\e0fceb7cd8008ae05c4826a419bc9de3\transformed\material-1.11.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\Sangam\.gradle\caches\8.13\transforms\94c77ce074f3fa54e2590bc99734c93c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
@@ -75,17 +86,21 @@ uses-permission#android.permission.FOREGROUND_SERVICE
 ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:7:5-77
 	android:name
 		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:7:22-74
-uses-permission#android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:8:5-92
-	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:8:22-89
 uses-permission#android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:9:5-95
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:8:5-95
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:9:22-92
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:8:22-92
+uses-permission#android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:9:5-92
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:9:22-89
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:10:5-81
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:10:22-78
 application
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:11:5-55:19
-INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:11:5-55:19
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:12:5-104:19
+INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:12:5-104:19
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\Sangam\.gradle\caches\8.13\transforms\e0fceb7cd8008ae05c4826a419bc9de3\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\Sangam\.gradle\caches\8.13\transforms\e0fceb7cd8008ae05c4826a419bc9de3\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\Sangam\.gradle\caches\8.13\transforms\94c77ce074f3fa54e2590bc99734c93c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -109,73 +124,143 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Sangam\.gradle\cac
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] C:\Users\Sangam\.gradle\caches\8.13\transforms\077df947e625d0ec6927222820de6f71\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:17:9-35
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:18:9-35
 	android:label
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:15:9-41
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:16:9-41
 	android:roundIcon
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:16:9-54
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:17:9-54
 	tools:targetApi
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:19:9-29
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:20:9-29
 	android:icon
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:14:9-43
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:15:9-43
 	android:allowBackup
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:13:9-35
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:14:9-35
 	android:theme
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:18:9-44
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:19:9-44
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:12:9-42
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:13:9-42
 activity#com.unloop.app.MainActivity
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:22:9-30:20
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:23:9-31:20
 	android:exported
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:24:13-36
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:25:13-36
 	android:theme
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:25:13-48
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:26:13-48
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:23:13-41
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:24:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:26:13-29:29
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:27:13-30:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:27:17-69
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:28:17-69
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:27:25-66
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:28:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:28:17-77
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:29:17-77
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:28:27-74
-service#com.unloop.app.service.MusicNotificationListenerService
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:33:9-40:19
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:29:27-74
+activity#com.unloop.app.SettingsActivity
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:33:9-36:51
 	android:exported
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:35:13-36
-	android:permission
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:36:13-87
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:35:13-37
+	android:theme
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:36:13-48
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:34:13-69
-intent-filter#action:name:android.service.notification.NotificationListenerService
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:37:13-39:29
-action#android.service.notification.NotificationListenerService
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:38:17-99
-	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:38:25-96
-service#com.unloop.app.service.UnloopAccessibilityService
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:43:9-53:19
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:34:13-45
+activity#com.unloop.app.LibraryActivity
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:38:9-41:51
 	android:exported
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:45:13-36
-	android:permission
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:46:13-79
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:40:13-37
+	android:theme
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:41:13-48
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:44:13-63
-intent-filter#action:name:android.accessibilityservice.AccessibilityService
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:47:13-49:29
-action#android.accessibilityservice.AccessibilityService
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:48:17-92
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:39:13-44
+activity#com.unloop.app.AnalyticsActivity
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:43:9-46:51
+	android:exported
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:45:13-37
+	android:theme
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:46:13-48
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:48:25-89
-meta-data#android.accessibilityservice
-ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:50:13-52:72
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:44:13-46
+receiver#com.unloop.app.StatsWidgetProvider
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:58:9-67:20
+	android:exported
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:60:13-36
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:59:13-48
+intent-filter#action:name:android.appwidget.action.APPWIDGET_UPDATE
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:61:13-63:29
+action#android.appwidget.action.APPWIDGET_UPDATE
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:62:17-84
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:62:25-81
+meta-data#android.appwidget.provider
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:64:13-66:55
 	android:resource
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:52:17-69
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:66:17-52
 	android:name
-		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:51:17-60
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:65:17-58
+service#com.unloop.app.service.MusicNotificationListenerService
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:70:9-77:19
+	android:exported
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:72:13-36
+	android:permission
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:73:13-87
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:71:13-69
+intent-filter#action:name:android.service.notification.NotificationListenerService
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:74:13-76:29
+action#android.service.notification.NotificationListenerService
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:75:17-99
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:75:25-96
+service#com.unloop.app.service.UnloopAccessibilityService
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:80:9-90:19
+	android:exported
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:82:13-36
+	android:permission
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:83:13-79
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:81:13-63
+intent-filter#action:name:android.accessibilityservice.AccessibilityService
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:84:13-86:29
+action#android.accessibilityservice.AccessibilityService
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:85:17-92
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:85:25-89
+meta-data#android.accessibilityservice
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:87:13-89:72
+	android:resource
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:89:17-69
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:88:17-60
+receiver#com.unloop.app.service.BootReceiver
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:93:9-102:20
+	android:enabled
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:95:13-35
+	android:exported
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:96:13-36
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:94:13-49
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.LOCKED_BOOT_COMPLETED+action:name:android.intent.action.QUICKBOOT_POWERON
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:97:13-101:29
+action#android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:98:17-79
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:98:25-76
+action#android.intent.action.LOCKED_BOOT_COMPLETED
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:99:17-86
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:99:25-83
+action#android.intent.action.QUICKBOOT_POWERON
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:100:17-82
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:100:25-79
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:53:13-55:58
+	android:resource
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:55:17-55
+	android:name
+		ADDED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml:54:17-67
 uses-sdk
 INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Sangam\Pictures\unloop-1\android-app\app\src\main\AndroidManifest.xml

@@ -4,6 +4,7 @@ package com.unloop.app.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -32,13 +33,22 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton btnGrantAccessibility;
 
   @NonNull
+  public final MaterialButton btnGrantBattery;
+
+  @NonNull
   public final MaterialButton btnGrantNotification;
+
+  @NonNull
+  public final ImageButton btnSettings;
 
   @NonNull
   public final MaterialButton btnSkipHistory;
 
   @NonNull
   public final LinearLayout cardAccessibilityPermission;
+
+  @NonNull
+  public final LinearLayout cardBatteryPermission;
 
   @NonNull
   public final LinearLayout cardNotificationPermission;
@@ -69,20 +79,24 @@ public final class ActivityMainBinding implements ViewBinding {
 
   private ActivityMainBinding(@NonNull ScrollView rootView, @NonNull MaterialButton btnClearData,
       @NonNull MaterialButton btnExportData, @NonNull MaterialButton btnGrantAccessibility,
-      @NonNull MaterialButton btnGrantNotification, @NonNull MaterialButton btnSkipHistory,
+      @NonNull MaterialButton btnGrantBattery, @NonNull MaterialButton btnGrantNotification,
+      @NonNull ImageButton btnSettings, @NonNull MaterialButton btnSkipHistory,
       @NonNull LinearLayout cardAccessibilityPermission,
-      @NonNull LinearLayout cardNotificationPermission, @NonNull LinearLayout llPermissionCards,
-      @NonNull TextView statusText, @NonNull SwitchMaterial switchEnabled,
-      @NonNull TextView textArtistCount, @NonNull TextView textListenTime,
-      @NonNull TextView textLoopsAvoided, @NonNull TextView textModeDescription,
-      @NonNull TextView textSongCount) {
+      @NonNull LinearLayout cardBatteryPermission, @NonNull LinearLayout cardNotificationPermission,
+      @NonNull LinearLayout llPermissionCards, @NonNull TextView statusText,
+      @NonNull SwitchMaterial switchEnabled, @NonNull TextView textArtistCount,
+      @NonNull TextView textListenTime, @NonNull TextView textLoopsAvoided,
+      @NonNull TextView textModeDescription, @NonNull TextView textSongCount) {
     this.rootView = rootView;
     this.btnClearData = btnClearData;
     this.btnExportData = btnExportData;
     this.btnGrantAccessibility = btnGrantAccessibility;
+    this.btnGrantBattery = btnGrantBattery;
     this.btnGrantNotification = btnGrantNotification;
+    this.btnSettings = btnSettings;
     this.btnSkipHistory = btnSkipHistory;
     this.cardAccessibilityPermission = cardAccessibilityPermission;
+    this.cardBatteryPermission = cardBatteryPermission;
     this.cardNotificationPermission = cardNotificationPermission;
     this.llPermissionCards = llPermissionCards;
     this.statusText = statusText;
@@ -139,9 +153,21 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btnGrantBattery;
+      MaterialButton btnGrantBattery = ViewBindings.findChildViewById(rootView, id);
+      if (btnGrantBattery == null) {
+        break missingId;
+      }
+
       id = R.id.btnGrantNotification;
       MaterialButton btnGrantNotification = ViewBindings.findChildViewById(rootView, id);
       if (btnGrantNotification == null) {
+        break missingId;
+      }
+
+      id = R.id.btnSettings;
+      ImageButton btnSettings = ViewBindings.findChildViewById(rootView, id);
+      if (btnSettings == null) {
         break missingId;
       }
 
@@ -154,6 +180,12 @@ public final class ActivityMainBinding implements ViewBinding {
       id = R.id.cardAccessibilityPermission;
       LinearLayout cardAccessibilityPermission = ViewBindings.findChildViewById(rootView, id);
       if (cardAccessibilityPermission == null) {
+        break missingId;
+      }
+
+      id = R.id.cardBatteryPermission;
+      LinearLayout cardBatteryPermission = ViewBindings.findChildViewById(rootView, id);
+      if (cardBatteryPermission == null) {
         break missingId;
       }
 
@@ -212,9 +244,10 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((ScrollView) rootView, btnClearData, btnExportData,
-          btnGrantAccessibility, btnGrantNotification, btnSkipHistory, cardAccessibilityPermission,
-          cardNotificationPermission, llPermissionCards, statusText, switchEnabled, textArtistCount,
-          textListenTime, textLoopsAvoided, textModeDescription, textSongCount);
+          btnGrantAccessibility, btnGrantBattery, btnGrantNotification, btnSettings, btnSkipHistory,
+          cardAccessibilityPermission, cardBatteryPermission, cardNotificationPermission,
+          llPermissionCards, statusText, switchEnabled, textArtistCount, textListenTime,
+          textLoopsAvoided, textModeDescription, textSongCount);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

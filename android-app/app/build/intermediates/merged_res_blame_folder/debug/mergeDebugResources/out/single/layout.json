@@ -1,7 +1,35 @@
 [
     {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\activity_settings.xml",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\activity_settings.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\widget_stats.xml",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\widget_stats.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\item_stat_card_small.xml",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\item_stat_card_small.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\item_song_library.xml",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\item_song_library.xml"
+    },
+    {
+        "merged": "com.unloop.app-mergeDebugResources-40:/layout/widget_stats.xml",
+        "source": "com.unloop.app-main-43:/layout/widget_stats.xml"
+    },
+    {
         "merged": "com.unloop.app-mergeDebugResources-40:/layout/activity_main.xml",
         "source": "com.unloop.app-main-43:/layout/activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\activity_library.xml",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\activity_library.xml"
+    },
+    {
+        "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\activity_analytics.xml",
+        "source": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-main-43:\\layout\\activity_analytics.xml"
     },
     {
         "merged": "C:\\Users\\Sangam\\.gradle\\daemon\\8.13\\com.unloop.app-mergeDebugResources-40:\\layout\\activity_main.xml",

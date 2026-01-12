@@ -39,10 +39,14 @@ public final class UnloopDatabase_Impl extends UnloopDatabase {
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_artist` ON `songs` (`artist`)");
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_lastPlayedAt` ON `songs` (`lastPlayedAt`)");
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_platform` ON `songs` (`platform`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_firstPlayedAt` ON `songs` (`firstPlayedAt`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_playCount` ON `songs` (`playCount`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_isWhitelisted` ON `songs` (`isWhitelisted`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_songs_isBlacklisted` ON `songs` (`isBlacklisted`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `daily_stats` (`date` TEXT NOT NULL, `songsDiscovered` INTEGER NOT NULL, `loopsAvoided` INTEGER NOT NULL, `listenTimeMs` INTEGER NOT NULL, `youtubePlays` INTEGER NOT NULL, `spotifyPlays` INTEGER NOT NULL, PRIMARY KEY(`date`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `skip_history` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `songId` TEXT NOT NULL, `songTitle` TEXT NOT NULL, `songArtist` TEXT NOT NULL, `platform` TEXT NOT NULL, `reason` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6854eaeb15008855526eef5a7b46aa00')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '78447bdc6a73cce1363fbedb564636ce')");
       }
 
       @Override
@@ -113,10 +117,14 @@ public final class UnloopDatabase_Impl extends UnloopDatabase {
         _columnsSongs.put("isBlacklisted", new TableInfo.Column("isBlacklisted", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsSongs.put("affectionScore", new TableInfo.Column("affectionScore", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysSongs = new HashSet<TableInfo.ForeignKey>(0);
-        final HashSet<TableInfo.Index> _indicesSongs = new HashSet<TableInfo.Index>(3);
+        final HashSet<TableInfo.Index> _indicesSongs = new HashSet<TableInfo.Index>(7);
         _indicesSongs.add(new TableInfo.Index("index_songs_artist", false, Arrays.asList("artist"), Arrays.asList("ASC")));
         _indicesSongs.add(new TableInfo.Index("index_songs_lastPlayedAt", false, Arrays.asList("lastPlayedAt"), Arrays.asList("ASC")));
         _indicesSongs.add(new TableInfo.Index("index_songs_platform", false, Arrays.asList("platform"), Arrays.asList("ASC")));
+        _indicesSongs.add(new TableInfo.Index("index_songs_firstPlayedAt", false, Arrays.asList("firstPlayedAt"), Arrays.asList("ASC")));
+        _indicesSongs.add(new TableInfo.Index("index_songs_playCount", false, Arrays.asList("playCount"), Arrays.asList("ASC")));
+        _indicesSongs.add(new TableInfo.Index("index_songs_isWhitelisted", false, Arrays.asList("isWhitelisted"), Arrays.asList("ASC")));
+        _indicesSongs.add(new TableInfo.Index("index_songs_isBlacklisted", false, Arrays.asList("isBlacklisted"), Arrays.asList("ASC")));
         final TableInfo _infoSongs = new TableInfo("songs", _columnsSongs, _foreignKeysSongs, _indicesSongs);
         final TableInfo _existingSongs = TableInfo.read(db, "songs");
         if (!_infoSongs.equals(_existingSongs)) {
@@ -159,7 +167,7 @@ public final class UnloopDatabase_Impl extends UnloopDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "6854eaeb15008855526eef5a7b46aa00", "bb04ccfd8ce76396ab863bcefbbbbd5c");
+    }, "78447bdc6a73cce1363fbedb564636ce", "fe6a8efe94d6e5ba93fd286898b40720");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

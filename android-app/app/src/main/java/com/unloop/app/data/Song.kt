@@ -12,7 +12,11 @@ import androidx.room.PrimaryKey
     indices = [
         Index(value = ["artist"]),
         Index(value = ["lastPlayedAt"]),
-        Index(value = ["platform"])
+        Index(value = ["platform"]),
+        Index(value = ["firstPlayedAt"]),
+        Index(value = ["playCount"]),
+        Index(value = ["isWhitelisted"]),
+        Index(value = ["isBlacklisted"])
     ]
 )
 data class Song(

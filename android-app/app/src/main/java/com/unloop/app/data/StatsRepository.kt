@@ -1,6 +1,14 @@
 package com.unloop.app.data
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import com.unloop.app.StatsWidgetProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -10,7 +18,18 @@ import java.util.*
 /**
  * Repository for comprehensive listening statistics
  */
-class StatsRepository(context: Context) {
+class StatsRepository private constructor(private val context: Context) {
+
+    companion object {
+        @Volatile
+        private var instance: StatsRepository? = null
+
+        fun getInstance(context: Context): StatsRepository {
+            return instance ?: synchronized(this) {
+                instance ?: StatsRepository(context.applicationContext).also { instance = it }
+            }
+        }
+    }
     
     private val database = UnloopDatabase.getDatabase(context)
     private val dao = database.songDao()
@@ -21,10 +40,14 @@ class StatsRepository(context: Context) {
     private var sessionLoopsAvoided = 0
     private var sessionListenTimeMs = 0L
     
+    // Performance: Debounce widget updates (max once per 2 seconds)
+    private var lastWidgetUpdateTime = 0L
+    private val WIDGET_UPDATE_DEBOUNCE_MS = 2000L
+    
     /**
      * Get comprehensive listening statistics
      */
-    suspend fun getStats(): ListeningStats {
+    suspend fun getStats(): ListeningStats = withContext(Dispatchers.IO) {
         val now = System.currentTimeMillis()
         val todayStart = getStartOfDay(now)
         val weekStart = getStartOfWeek(now)
@@ -56,7 +79,7 @@ class StatsRepository(context: Context) {
         val varietyScore = calculateVarietyScore(topArtists, totalSongs)
         val intelligenceScore = calculateIntelligenceScore(totalSongs, totalLoops)
         
-        return ListeningStats(
+        ListeningStats(
             totalSongsDiscovered = totalSongs,
             totalLoopsAvoided = totalLoops,
             totalArtistsDiscovered = totalArtists,
@@ -96,14 +119,34 @@ class StatsRepository(context: Context) {
     /**
      * Record a new song play
      */
-    suspend fun recordSongPlay(
+    /**
+     * Check if session shouldnbe reset (10 mins inactivity)
+     */
+    fun checkSessionTimeout() {
+        val now = System.currentTimeMillis()
+        if (now - sessionStartTime > 10 * 60 * 1000 && sessionListenTimeMs == 0L) {
+            // Initial start
+        } else if (now - lastActivityTime > 10 * 60 * 1000) {
+            resetSession()
+        }
+        lastActivityTime = now
+    }
+    
+    private var lastActivityTime = System.currentTimeMillis()
+
+    /**
+     * Increment play count for a song (Start of play)
+     */
+    suspend fun incrementPlayCount(
         songId: String,
         title: String,
         artist: String,
-        platform: String,
-        listenTimeMs: Long
-    ) {
+        platform: String
+    ) = withContext(Dispatchers.IO) {
+        checkSessionTimeout()
+        
         var song = dao.getSongById(songId)
+        val now = System.currentTimeMillis()
         
         if (song == null) {
             // New song discovered
@@ -113,44 +156,55 @@ class StatsRepository(context: Context) {
                 artist = artist,
                 platform = platform,
                 playCount = 1,
-                firstPlayedAt = System.currentTimeMillis(),
-                lastPlayedAt = System.currentTimeMillis(),
-                totalListenTimeMs = listenTimeMs
+                firstPlayedAt = now,
+                lastPlayedAt = now,
+                totalListenTimeMs = 0
             )
             sessionSongsDiscovered++
+            updateDailyStats(platform, 0, isNewSong = true)
         } else {
             song.playCount++
-            song.lastPlayedAt = System.currentTimeMillis()
-            song.totalListenTimeMs += listenTimeMs
+            song.lastPlayedAt = now
+            updateDailyStats(platform, 0, isNewSong = false)
         }
         
-        // Update platform-specific stats
+        // Update platform-specific counts
         when {
-            platform.contains("youtube") -> {
-                song.youtubePlayCount++
-                song.youtubeListenTimeMs += listenTimeMs
-            }
-            platform.contains("spotify") -> {
-                song.spotifyPlayCount++
-                song.spotifyListenTimeMs += listenTimeMs
-            }
+            platform.contains("youtube") -> song.youtubePlayCount++
+            platform.contains("spotify") -> song.spotifyPlayCount++
         }
         
         song.affectionScore = song.calculateAffectionScore()
         dao.insertSong(song)
+    }
+
+    /**
+     * Record listening time for a song (End of play)
+     */
+    suspend fun recordListenTime(songId: String, durationMs: Long) = withContext(Dispatchers.IO) {
+        if (durationMs <= 0) return@withContext
         
-        // Update session stats
-        sessionListenTimeMs += listenTimeMs
+        val song = dao.getSongById(songId) ?: return@withContext
+        song.totalListenTimeMs += durationMs
         
-        // Update daily stats
-        updateDailyStats(platform, listenTimeMs, isNewSong = song.playCount == 1)
+        when {
+            song.platform.contains("youtube") -> song.youtubeListenTimeMs += durationMs
+            song.platform.contains("spotify") -> song.spotifyListenTimeMs += durationMs
+        }
+        
+        dao.updateSong(song)
+        
+        sessionListenTimeMs += durationMs
+        updateDailyStats(song.platform, durationMs, isNewSong = false)
+        triggerWidgetUpdate()
     }
     
     /**
      * Record a loop avoided (song was auto-skipped)
      */
-    suspend fun recordLoopAvoided(songId: String) {
-        val song = dao.getSongById(songId) ?: return
+    suspend fun recordLoopAvoided(songId: String) = withContext(Dispatchers.IO) {
+        checkSessionTimeout()
+        val song = dao.getSongById(songId) ?: return@withContext
         song.loopsAvoided++
         song.skipCount++
         dao.updateSong(song)
@@ -162,16 +216,20 @@ class StatsRepository(context: Context) {
         var dailyStats = dao.getDailyStats(today) ?: DailyStats(date = today)
         dailyStats.loopsAvoided++
         dao.insertDailyStats(dailyStats)
+        triggerWidgetUpdate()
     }
     
     /**
      * Reset session stats
      */
     fun resetSession() {
-        sessionStartTime = System.currentTimeMillis()
-        sessionSongsDiscovered = 0
-        sessionLoopsAvoided = 0
-        sessionListenTimeMs = 0L
+        CoroutineScope(Dispatchers.IO).launch {
+            sessionStartTime = System.currentTimeMillis()
+            sessionSongsDiscovered = 0
+            sessionLoopsAvoided = 0
+            sessionListenTimeMs = 0L
+            triggerWidgetUpdate()
+        }
     }
     
     private suspend fun updateDailyStats(platform: String, listenTimeMs: Long, isNewSong: Boolean) {
@@ -239,4 +297,43 @@ class StatsRepository(context: Context) {
         calendar.set(Calendar.DAY_OF_MONTH, 1)
         return calendar.timeInMillis
     }
+    
+    private fun triggerWidgetUpdate() {
+        // Debounce: max once per 2 seconds to prevent excessive updates
+        val now = System.currentTimeMillis()
+        if (now - lastWidgetUpdateTime < WIDGET_UPDATE_DEBOUNCE_MS) return
+        lastWidgetUpdateTime = now
+        
+        try {
+            val intent = Intent(context, StatsWidgetProvider::class.java)
+            intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            val ids = AppWidgetManager.getInstance(context).getAppWidgetIds(
+                ComponentName(context, StatsWidgetProvider::class.java)
+            )
+            // Only update if there are widgets on screen
+            if (ids.isNotEmpty()) {
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                context.sendBroadcast(intent)
+            }
+        } catch (e: Exception) {
+            // Silently ignore widget errors
+        }
+    }
+    
+    /**
+     * Lightweight stats for widget - only essential data, minimal queries
+     */
+    fun getWidgetStats(): WidgetStats {
+        return WidgetStats(
+            sessionListenTimeMs = sessionListenTimeMs,
+            sessionLoopsAvoided = sessionLoopsAvoided,
+            totalListenTimeMs = sessionListenTimeMs // Use session as proxy to avoid DB query
+        )
+    }
 }
+
+data class WidgetStats(
+    val sessionListenTimeMs: Long,
+    val sessionLoopsAvoided: Int,
+    val totalListenTimeMs: Long
+)

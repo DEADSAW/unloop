@@ -11,8 +11,9 @@
     <!-- Permissions -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <permission
         android:name="com.unloop.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -44,6 +45,40 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.unloop.app.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Unloop" />
+        <activity
+            android:name="com.unloop.app.LibraryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Unloop" />
+        <activity
+            android:name="com.unloop.app.AnalyticsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Unloop" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.unloop.app.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <receiver
+            android:name="com.unloop.app.StatsWidgetProvider"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
 
         <!-- Notification Listener Service - Detects music playing -->
         <service
@@ -68,6 +103,18 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
         </service>
+
+        <!-- Boot Receiver - Auto-start on device boot -->
+        <receiver
+            android:name="com.unloop.app.service.BootReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="androidx.startup.InitializationProvider"

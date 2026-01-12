@@ -1357,6 +1357,7 @@ color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
+color bg_chip_state
 color black
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
@@ -3020,7 +3021,10 @@ drawable design_ic_visibility_off
 drawable design_password_eye
 drawable design_snackbar_background
 drawable gradient_primary
+drawable ic_arrow_back
 drawable ic_arrow_back_black_24
+drawable ic_block_filled
+drawable ic_block_outline
 drawable ic_call_answer
 drawable ic_call_answer_low
 drawable ic_call_answer_video
@@ -3030,6 +3034,8 @@ drawable ic_call_decline_low
 drawable ic_check_circle
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
+drawable ic_heart_filled
+drawable ic_heart_outline
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_foreground
 drawable ic_m3_chip_check
@@ -3040,6 +3046,8 @@ drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
 drawable ic_search_black_24
+drawable ic_settings
+drawable ic_share
 drawable ic_warning
 drawable m3_avd_hide_password
 drawable m3_avd_show_password
@@ -3214,16 +3222,28 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnBack
+id btnBackup
+id btnBlacklist
 id btnClearData
 id btnExportData
 id btnGrantAccessibility
+id btnGrantBattery
 id btnGrantNotification
+id btnLibrary
+id btnRestore
+id btnSettings
+id btnShare
 id btnSkipHistory
+id btnWhitelist
 id buttonPanel
 id cache_measures
 id callMeasure
 id cancel_button
 id cardAccessibilityPermission
+id cardBatteryPermission
+id cardLoops
+id cardNewSongs
 id cardNotificationPermission
 id carryVelocity
 id center
@@ -3234,8 +3254,14 @@ id center_vertical
 id chain
 id chain2
 id chains
+id chartActivity
+id chartArtists
 id checkbox
 id checked
+id chipAll
+id chipBlacklisted
+id chipGroupFilter
+id chipWhitelisted
 id chronometer
 id circle_center
 id clear_text
@@ -3347,6 +3373,7 @@ id immediateStop
 id included
 id indeterminate
 id info
+id inputSearch
 id invisible
 id inward
 id italic
@@ -3355,6 +3382,8 @@ id jumpToEnd
 id jumpToStart
 id labeled
 id layout
+id layoutThreshold
+id layoutTimeBased
 id left
 id leftToRight
 id legacy
@@ -3480,8 +3509,14 @@ id pressed
 id progress_circular
 id progress_horizontal
 id radio
+id radioGroupMode
+id radioSmart
+id radioStrict
+id radioThreshold
+id radioTimeBased
 id ratio
 id rectangles
+id recyclerViewSongs
 id report_drawn
 id reverseSawtooth
 id right
@@ -3498,6 +3533,7 @@ id screen
 id scroll
 id scrollIndicatorDown
 id scrollIndicatorUp
+id scrollRoot
 id scrollView
 id scrollable
 id search_badge
@@ -3510,6 +3546,8 @@ id search_mag_icon
 id search_plate
 id search_src_text
 id search_voice_btn
+id seekBarFade
+id seekBarThreshold
 id select_dialog_listview
 id selected
 id selection_type
@@ -3544,6 +3582,8 @@ id start
 id startHorizontal
 id startToEnd
 id startVertical
+id statLabel
+id statValue
 id staticLayout
 id staticPostLayout
 id statusText
@@ -3553,6 +3593,7 @@ id submenuarrow
 id submit_area
 id supportScrollUp
 id switchEnabled
+id switchTheme
 id tabMode
 id tag_accessibility_actions
 id tag_accessibility_clickable_spans
@@ -3569,8 +3610,10 @@ id tag_unhandled_key_listeners
 id tag_window_insets_animation_callback
 id text
 id text2
+id textArtist
 id textArtistCount
 id textEnd
+id textFadeValue
 id textListenTime
 id textLoopsAvoided
 id textModeDescription
@@ -3578,6 +3621,9 @@ id textSongCount
 id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
+id textStats
+id textThresholdValue
+id textTitle
 id textTop
 id text_input_end_icon
 id text_input_error_icon
@@ -3619,6 +3665,9 @@ id view_tree_view_model_store_owner
 id visible
 id visible_removing_fragment_view_tag
 id west
+id widgetLoops
+id widgetSessionTime
+id widgetTotalTime
 id withText
 id with_icon
 id withinBounds
@@ -3741,7 +3790,10 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_analytics
+layout activity_library
 layout activity_main
+layout activity_settings
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
@@ -3760,6 +3812,8 @@ layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
+layout item_song_library
+layout item_stat_card_small
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
@@ -3821,6 +3875,7 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+layout widget_stats
 mipmap ic_launcher
 mipmap ic_launcher_round
 plurals mtrl_badge_content_description
@@ -3865,7 +3920,10 @@ string bottomsheet_action_expand
 string bottomsheet_action_expand_halfway
 string bottomsheet_drag_handle_clicked
 string bottomsheet_drag_handle_content_description
+string btn_backup
+string btn_enable
 string btn_grant_permission
+string btn_restore
 string call_notification_answer_action
 string call_notification_answer_video_action
 string call_notification_decline_action
@@ -3933,6 +3991,12 @@ string mode_smart_auto
 string mode_smart_auto_desc
 string mode_strict
 string mode_strict_desc
+string msg_backing_up
+string msg_backup_fail
+string msg_backup_success
+string msg_restore_fail
+string msg_restore_success
+string msg_restoring
 string mtrl_badge_numberless_content_description
 string mtrl_checkbox_button_icon_path_checked
 string mtrl_checkbox_button_icon_path_group_name
@@ -4002,6 +4066,8 @@ string path_password_eye
 string path_password_eye_mask_strike_through
 string path_password_eye_mask_visible
 string path_password_strike_through
+string perm_battery_desc
+string perm_battery_title
 string permission_accessibility_desc
 string permission_accessibility_title
 string permission_notification_desc
@@ -4023,6 +4089,10 @@ string toast_fresh
 string toast_skipped
 string toggle_disabled
 string toggle_enabled
+string widget_current_session
+string widget_loops_avoided
+string widget_title
+string widget_total_time
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog
@@ -5294,3 +5364,5 @@ styleable ViewStubCompat android_id android_layout android_inflatedId
 styleable ViewTransition android_id SharedValue SharedValueId clearsTag duration ifTagNotSet ifTagSet motionInterpolator motionTarget onStateTransition pathMotionArc setsTag transitionDisable upDuration viewTransitionMode
 styleable include constraintSet
 xml accessibility_service_config
+xml provider_paths
+xml widget_info

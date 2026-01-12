@@ -129,7 +129,7 @@ public final class SongDao_Impl implements SongDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR ABORT INTO `skip_history` (`id`,`songId`,`songTitle`,`songArtist`,`platform`,`reason`,`timestamp`) VALUES (nullif(?, 0),?,?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `skip_history` (`id`,`songId`,`songTitle`,`songArtist`,`platform`,`reason`,`timestamp`) VALUES (nullif(?, 0),?,?,?,?,?,?)";
       }
 
       @Override
@@ -287,6 +287,24 @@ public final class SongDao_Impl implements SongDao {
   }
 
   @Override
+  public Object insertSongs(final List<Song> songs, final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        __db.beginTransaction();
+        try {
+          __insertionAdapterOfSong.insert(songs);
+          __db.setTransactionSuccessful();
+          return Unit.INSTANCE;
+        } finally {
+          __db.endTransaction();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Object insertDailyStats(final DailyStats stats,
       final Continuation<? super Unit> $completion) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
@@ -315,6 +333,25 @@ public final class SongDao_Impl implements SongDao {
         __db.beginTransaction();
         try {
           __insertionAdapterOfSkipHistoryEntry.insert(entry);
+          __db.setTransactionSuccessful();
+          return Unit.INSTANCE;
+        } finally {
+          __db.endTransaction();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object insertSkipHistoryList(final List<SkipHistoryEntry> entries,
+      final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        __db.beginTransaction();
+        try {
+          __insertionAdapterOfSkipHistoryEntry.insert(entries);
           __db.setTransactionSuccessful();
           return Unit.INSTANCE;
         } finally {
@@ -679,6 +716,351 @@ public final class SongDao_Impl implements SongDao {
         }
       }
     }, $completion);
+  }
+
+  @Override
+  public Flow<List<Song>> searchSongs(final String query) {
+    final String _sql = "SELECT * FROM songs WHERE title LIKE '%' || ? || '%' OR artist LIKE '%' || ? || '%' ORDER BY lastPlayedAt DESC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 2);
+    int _argIndex = 1;
+    if (query == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, query);
+    }
+    _argIndex = 2;
+    if (query == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, query);
+    }
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"songs"}, new Callable<List<Song>>() {
+      @Override
+      @NonNull
+      public List<Song> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfArtist = CursorUtil.getColumnIndexOrThrow(_cursor, "artist");
+          final int _cursorIndexOfPlatform = CursorUtil.getColumnIndexOrThrow(_cursor, "platform");
+          final int _cursorIndexOfPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "playCount");
+          final int _cursorIndexOfSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "skipCount");
+          final int _cursorIndexOfQuickSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "quickSkipCount");
+          final int _cursorIndexOfLoopsAvoided = CursorUtil.getColumnIndexOrThrow(_cursor, "loopsAvoided");
+          final int _cursorIndexOfFirstPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "firstPlayedAt");
+          final int _cursorIndexOfLastPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastPlayedAt");
+          final int _cursorIndexOfTotalListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "totalListenTimeMs");
+          final int _cursorIndexOfYoutubePlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubePlayCount");
+          final int _cursorIndexOfSpotifyPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyPlayCount");
+          final int _cursorIndexOfYoutubeListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubeListenTimeMs");
+          final int _cursorIndexOfSpotifyListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyListenTimeMs");
+          final int _cursorIndexOfIsWhitelisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isWhitelisted");
+          final int _cursorIndexOfIsBlacklisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isBlacklisted");
+          final int _cursorIndexOfAffectionScore = CursorUtil.getColumnIndexOrThrow(_cursor, "affectionScore");
+          final List<Song> _result = new ArrayList<Song>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final Song _item;
+            final String _tmpId;
+            if (_cursor.isNull(_cursorIndexOfId)) {
+              _tmpId = null;
+            } else {
+              _tmpId = _cursor.getString(_cursorIndexOfId);
+            }
+            final String _tmpTitle;
+            if (_cursor.isNull(_cursorIndexOfTitle)) {
+              _tmpTitle = null;
+            } else {
+              _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            }
+            final String _tmpArtist;
+            if (_cursor.isNull(_cursorIndexOfArtist)) {
+              _tmpArtist = null;
+            } else {
+              _tmpArtist = _cursor.getString(_cursorIndexOfArtist);
+            }
+            final String _tmpPlatform;
+            if (_cursor.isNull(_cursorIndexOfPlatform)) {
+              _tmpPlatform = null;
+            } else {
+              _tmpPlatform = _cursor.getString(_cursorIndexOfPlatform);
+            }
+            final int _tmpPlayCount;
+            _tmpPlayCount = _cursor.getInt(_cursorIndexOfPlayCount);
+            final int _tmpSkipCount;
+            _tmpSkipCount = _cursor.getInt(_cursorIndexOfSkipCount);
+            final int _tmpQuickSkipCount;
+            _tmpQuickSkipCount = _cursor.getInt(_cursorIndexOfQuickSkipCount);
+            final int _tmpLoopsAvoided;
+            _tmpLoopsAvoided = _cursor.getInt(_cursorIndexOfLoopsAvoided);
+            final long _tmpFirstPlayedAt;
+            _tmpFirstPlayedAt = _cursor.getLong(_cursorIndexOfFirstPlayedAt);
+            final long _tmpLastPlayedAt;
+            _tmpLastPlayedAt = _cursor.getLong(_cursorIndexOfLastPlayedAt);
+            final long _tmpTotalListenTimeMs;
+            _tmpTotalListenTimeMs = _cursor.getLong(_cursorIndexOfTotalListenTimeMs);
+            final int _tmpYoutubePlayCount;
+            _tmpYoutubePlayCount = _cursor.getInt(_cursorIndexOfYoutubePlayCount);
+            final int _tmpSpotifyPlayCount;
+            _tmpSpotifyPlayCount = _cursor.getInt(_cursorIndexOfSpotifyPlayCount);
+            final long _tmpYoutubeListenTimeMs;
+            _tmpYoutubeListenTimeMs = _cursor.getLong(_cursorIndexOfYoutubeListenTimeMs);
+            final long _tmpSpotifyListenTimeMs;
+            _tmpSpotifyListenTimeMs = _cursor.getLong(_cursorIndexOfSpotifyListenTimeMs);
+            final boolean _tmpIsWhitelisted;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsWhitelisted);
+            _tmpIsWhitelisted = _tmp != 0;
+            final boolean _tmpIsBlacklisted;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsBlacklisted);
+            _tmpIsBlacklisted = _tmp_1 != 0;
+            final float _tmpAffectionScore;
+            _tmpAffectionScore = _cursor.getFloat(_cursorIndexOfAffectionScore);
+            _item = new Song(_tmpId,_tmpTitle,_tmpArtist,_tmpPlatform,_tmpPlayCount,_tmpSkipCount,_tmpQuickSkipCount,_tmpLoopsAvoided,_tmpFirstPlayedAt,_tmpLastPlayedAt,_tmpTotalListenTimeMs,_tmpYoutubePlayCount,_tmpSpotifyPlayCount,_tmpYoutubeListenTimeMs,_tmpSpotifyListenTimeMs,_tmpIsWhitelisted,_tmpIsBlacklisted,_tmpAffectionScore);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<Song>> searchWhitelistedSongs(final String query) {
+    final String _sql = "SELECT * FROM songs WHERE (title LIKE '%' || ? || '%' OR artist LIKE '%' || ? || '%') AND isWhitelisted = 1 ORDER BY lastPlayedAt DESC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 2);
+    int _argIndex = 1;
+    if (query == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, query);
+    }
+    _argIndex = 2;
+    if (query == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, query);
+    }
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"songs"}, new Callable<List<Song>>() {
+      @Override
+      @NonNull
+      public List<Song> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfArtist = CursorUtil.getColumnIndexOrThrow(_cursor, "artist");
+          final int _cursorIndexOfPlatform = CursorUtil.getColumnIndexOrThrow(_cursor, "platform");
+          final int _cursorIndexOfPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "playCount");
+          final int _cursorIndexOfSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "skipCount");
+          final int _cursorIndexOfQuickSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "quickSkipCount");
+          final int _cursorIndexOfLoopsAvoided = CursorUtil.getColumnIndexOrThrow(_cursor, "loopsAvoided");
+          final int _cursorIndexOfFirstPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "firstPlayedAt");
+          final int _cursorIndexOfLastPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastPlayedAt");
+          final int _cursorIndexOfTotalListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "totalListenTimeMs");
+          final int _cursorIndexOfYoutubePlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubePlayCount");
+          final int _cursorIndexOfSpotifyPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyPlayCount");
+          final int _cursorIndexOfYoutubeListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubeListenTimeMs");
+          final int _cursorIndexOfSpotifyListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyListenTimeMs");
+          final int _cursorIndexOfIsWhitelisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isWhitelisted");
+          final int _cursorIndexOfIsBlacklisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isBlacklisted");
+          final int _cursorIndexOfAffectionScore = CursorUtil.getColumnIndexOrThrow(_cursor, "affectionScore");
+          final List<Song> _result = new ArrayList<Song>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final Song _item;
+            final String _tmpId;
+            if (_cursor.isNull(_cursorIndexOfId)) {
+              _tmpId = null;
+            } else {
+              _tmpId = _cursor.getString(_cursorIndexOfId);
+            }
+            final String _tmpTitle;
+            if (_cursor.isNull(_cursorIndexOfTitle)) {
+              _tmpTitle = null;
+            } else {
+              _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            }
+            final String _tmpArtist;
+            if (_cursor.isNull(_cursorIndexOfArtist)) {
+              _tmpArtist = null;
+            } else {
+              _tmpArtist = _cursor.getString(_cursorIndexOfArtist);
+            }
+            final String _tmpPlatform;
+            if (_cursor.isNull(_cursorIndexOfPlatform)) {
+              _tmpPlatform = null;
+            } else {
+              _tmpPlatform = _cursor.getString(_cursorIndexOfPlatform);
+            }
+            final int _tmpPlayCount;
+            _tmpPlayCount = _cursor.getInt(_cursorIndexOfPlayCount);
+            final int _tmpSkipCount;
+            _tmpSkipCount = _cursor.getInt(_cursorIndexOfSkipCount);
+            final int _tmpQuickSkipCount;
+            _tmpQuickSkipCount = _cursor.getInt(_cursorIndexOfQuickSkipCount);
+            final int _tmpLoopsAvoided;
+            _tmpLoopsAvoided = _cursor.getInt(_cursorIndexOfLoopsAvoided);
+            final long _tmpFirstPlayedAt;
+            _tmpFirstPlayedAt = _cursor.getLong(_cursorIndexOfFirstPlayedAt);
+            final long _tmpLastPlayedAt;
+            _tmpLastPlayedAt = _cursor.getLong(_cursorIndexOfLastPlayedAt);
+            final long _tmpTotalListenTimeMs;
+            _tmpTotalListenTimeMs = _cursor.getLong(_cursorIndexOfTotalListenTimeMs);
+            final int _tmpYoutubePlayCount;
+            _tmpYoutubePlayCount = _cursor.getInt(_cursorIndexOfYoutubePlayCount);
+            final int _tmpSpotifyPlayCount;
+            _tmpSpotifyPlayCount = _cursor.getInt(_cursorIndexOfSpotifyPlayCount);
+            final long _tmpYoutubeListenTimeMs;
+            _tmpYoutubeListenTimeMs = _cursor.getLong(_cursorIndexOfYoutubeListenTimeMs);
+            final long _tmpSpotifyListenTimeMs;
+            _tmpSpotifyListenTimeMs = _cursor.getLong(_cursorIndexOfSpotifyListenTimeMs);
+            final boolean _tmpIsWhitelisted;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsWhitelisted);
+            _tmpIsWhitelisted = _tmp != 0;
+            final boolean _tmpIsBlacklisted;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsBlacklisted);
+            _tmpIsBlacklisted = _tmp_1 != 0;
+            final float _tmpAffectionScore;
+            _tmpAffectionScore = _cursor.getFloat(_cursorIndexOfAffectionScore);
+            _item = new Song(_tmpId,_tmpTitle,_tmpArtist,_tmpPlatform,_tmpPlayCount,_tmpSkipCount,_tmpQuickSkipCount,_tmpLoopsAvoided,_tmpFirstPlayedAt,_tmpLastPlayedAt,_tmpTotalListenTimeMs,_tmpYoutubePlayCount,_tmpSpotifyPlayCount,_tmpYoutubeListenTimeMs,_tmpSpotifyListenTimeMs,_tmpIsWhitelisted,_tmpIsBlacklisted,_tmpAffectionScore);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<Song>> searchBlacklistedSongs(final String query) {
+    final String _sql = "SELECT * FROM songs WHERE (title LIKE '%' || ? || '%' OR artist LIKE '%' || ? || '%') AND isBlacklisted = 1 ORDER BY lastPlayedAt DESC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 2);
+    int _argIndex = 1;
+    if (query == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, query);
+    }
+    _argIndex = 2;
+    if (query == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, query);
+    }
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"songs"}, new Callable<List<Song>>() {
+      @Override
+      @NonNull
+      public List<Song> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfArtist = CursorUtil.getColumnIndexOrThrow(_cursor, "artist");
+          final int _cursorIndexOfPlatform = CursorUtil.getColumnIndexOrThrow(_cursor, "platform");
+          final int _cursorIndexOfPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "playCount");
+          final int _cursorIndexOfSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "skipCount");
+          final int _cursorIndexOfQuickSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "quickSkipCount");
+          final int _cursorIndexOfLoopsAvoided = CursorUtil.getColumnIndexOrThrow(_cursor, "loopsAvoided");
+          final int _cursorIndexOfFirstPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "firstPlayedAt");
+          final int _cursorIndexOfLastPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastPlayedAt");
+          final int _cursorIndexOfTotalListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "totalListenTimeMs");
+          final int _cursorIndexOfYoutubePlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubePlayCount");
+          final int _cursorIndexOfSpotifyPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyPlayCount");
+          final int _cursorIndexOfYoutubeListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubeListenTimeMs");
+          final int _cursorIndexOfSpotifyListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyListenTimeMs");
+          final int _cursorIndexOfIsWhitelisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isWhitelisted");
+          final int _cursorIndexOfIsBlacklisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isBlacklisted");
+          final int _cursorIndexOfAffectionScore = CursorUtil.getColumnIndexOrThrow(_cursor, "affectionScore");
+          final List<Song> _result = new ArrayList<Song>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final Song _item;
+            final String _tmpId;
+            if (_cursor.isNull(_cursorIndexOfId)) {
+              _tmpId = null;
+            } else {
+              _tmpId = _cursor.getString(_cursorIndexOfId);
+            }
+            final String _tmpTitle;
+            if (_cursor.isNull(_cursorIndexOfTitle)) {
+              _tmpTitle = null;
+            } else {
+              _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            }
+            final String _tmpArtist;
+            if (_cursor.isNull(_cursorIndexOfArtist)) {
+              _tmpArtist = null;
+            } else {
+              _tmpArtist = _cursor.getString(_cursorIndexOfArtist);
+            }
+            final String _tmpPlatform;
+            if (_cursor.isNull(_cursorIndexOfPlatform)) {
+              _tmpPlatform = null;
+            } else {
+              _tmpPlatform = _cursor.getString(_cursorIndexOfPlatform);
+            }
+            final int _tmpPlayCount;
+            _tmpPlayCount = _cursor.getInt(_cursorIndexOfPlayCount);
+            final int _tmpSkipCount;
+            _tmpSkipCount = _cursor.getInt(_cursorIndexOfSkipCount);
+            final int _tmpQuickSkipCount;
+            _tmpQuickSkipCount = _cursor.getInt(_cursorIndexOfQuickSkipCount);
+            final int _tmpLoopsAvoided;
+            _tmpLoopsAvoided = _cursor.getInt(_cursorIndexOfLoopsAvoided);
+            final long _tmpFirstPlayedAt;
+            _tmpFirstPlayedAt = _cursor.getLong(_cursorIndexOfFirstPlayedAt);
+            final long _tmpLastPlayedAt;
+            _tmpLastPlayedAt = _cursor.getLong(_cursorIndexOfLastPlayedAt);
+            final long _tmpTotalListenTimeMs;
+            _tmpTotalListenTimeMs = _cursor.getLong(_cursorIndexOfTotalListenTimeMs);
+            final int _tmpYoutubePlayCount;
+            _tmpYoutubePlayCount = _cursor.getInt(_cursorIndexOfYoutubePlayCount);
+            final int _tmpSpotifyPlayCount;
+            _tmpSpotifyPlayCount = _cursor.getInt(_cursorIndexOfSpotifyPlayCount);
+            final long _tmpYoutubeListenTimeMs;
+            _tmpYoutubeListenTimeMs = _cursor.getLong(_cursorIndexOfYoutubeListenTimeMs);
+            final long _tmpSpotifyListenTimeMs;
+            _tmpSpotifyListenTimeMs = _cursor.getLong(_cursorIndexOfSpotifyListenTimeMs);
+            final boolean _tmpIsWhitelisted;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsWhitelisted);
+            _tmpIsWhitelisted = _tmp != 0;
+            final boolean _tmpIsBlacklisted;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsBlacklisted);
+            _tmpIsBlacklisted = _tmp_1 != 0;
+            final float _tmpAffectionScore;
+            _tmpAffectionScore = _cursor.getFloat(_cursorIndexOfAffectionScore);
+            _item = new Song(_tmpId,_tmpTitle,_tmpArtist,_tmpPlatform,_tmpPlayCount,_tmpSkipCount,_tmpQuickSkipCount,_tmpLoopsAvoided,_tmpFirstPlayedAt,_tmpLastPlayedAt,_tmpTotalListenTimeMs,_tmpYoutubePlayCount,_tmpSpotifyPlayCount,_tmpYoutubeListenTimeMs,_tmpSpotifyListenTimeMs,_tmpIsWhitelisted,_tmpIsBlacklisted,_tmpAffectionScore);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
   }
 
   @Override
@@ -1758,6 +2140,106 @@ public final class SongDao_Impl implements SongDao {
   }
 
   @Override
+  public Object getAllSongsList(final Continuation<? super List<Song>> $completion) {
+    final String _sql = "SELECT * FROM songs";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<Song>>() {
+      @Override
+      @NonNull
+      public List<Song> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
+          final int _cursorIndexOfArtist = CursorUtil.getColumnIndexOrThrow(_cursor, "artist");
+          final int _cursorIndexOfPlatform = CursorUtil.getColumnIndexOrThrow(_cursor, "platform");
+          final int _cursorIndexOfPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "playCount");
+          final int _cursorIndexOfSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "skipCount");
+          final int _cursorIndexOfQuickSkipCount = CursorUtil.getColumnIndexOrThrow(_cursor, "quickSkipCount");
+          final int _cursorIndexOfLoopsAvoided = CursorUtil.getColumnIndexOrThrow(_cursor, "loopsAvoided");
+          final int _cursorIndexOfFirstPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "firstPlayedAt");
+          final int _cursorIndexOfLastPlayedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastPlayedAt");
+          final int _cursorIndexOfTotalListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "totalListenTimeMs");
+          final int _cursorIndexOfYoutubePlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubePlayCount");
+          final int _cursorIndexOfSpotifyPlayCount = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyPlayCount");
+          final int _cursorIndexOfYoutubeListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "youtubeListenTimeMs");
+          final int _cursorIndexOfSpotifyListenTimeMs = CursorUtil.getColumnIndexOrThrow(_cursor, "spotifyListenTimeMs");
+          final int _cursorIndexOfIsWhitelisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isWhitelisted");
+          final int _cursorIndexOfIsBlacklisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isBlacklisted");
+          final int _cursorIndexOfAffectionScore = CursorUtil.getColumnIndexOrThrow(_cursor, "affectionScore");
+          final List<Song> _result = new ArrayList<Song>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final Song _item;
+            final String _tmpId;
+            if (_cursor.isNull(_cursorIndexOfId)) {
+              _tmpId = null;
+            } else {
+              _tmpId = _cursor.getString(_cursorIndexOfId);
+            }
+            final String _tmpTitle;
+            if (_cursor.isNull(_cursorIndexOfTitle)) {
+              _tmpTitle = null;
+            } else {
+              _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
+            }
+            final String _tmpArtist;
+            if (_cursor.isNull(_cursorIndexOfArtist)) {
+              _tmpArtist = null;
+            } else {
+              _tmpArtist = _cursor.getString(_cursorIndexOfArtist);
+            }
+            final String _tmpPlatform;
+            if (_cursor.isNull(_cursorIndexOfPlatform)) {
+              _tmpPlatform = null;
+            } else {
+              _tmpPlatform = _cursor.getString(_cursorIndexOfPlatform);
+            }
+            final int _tmpPlayCount;
+            _tmpPlayCount = _cursor.getInt(_cursorIndexOfPlayCount);
+            final int _tmpSkipCount;
+            _tmpSkipCount = _cursor.getInt(_cursorIndexOfSkipCount);
+            final int _tmpQuickSkipCount;
+            _tmpQuickSkipCount = _cursor.getInt(_cursorIndexOfQuickSkipCount);
+            final int _tmpLoopsAvoided;
+            _tmpLoopsAvoided = _cursor.getInt(_cursorIndexOfLoopsAvoided);
+            final long _tmpFirstPlayedAt;
+            _tmpFirstPlayedAt = _cursor.getLong(_cursorIndexOfFirstPlayedAt);
+            final long _tmpLastPlayedAt;
+            _tmpLastPlayedAt = _cursor.getLong(_cursorIndexOfLastPlayedAt);
+            final long _tmpTotalListenTimeMs;
+            _tmpTotalListenTimeMs = _cursor.getLong(_cursorIndexOfTotalListenTimeMs);
+            final int _tmpYoutubePlayCount;
+            _tmpYoutubePlayCount = _cursor.getInt(_cursorIndexOfYoutubePlayCount);
+            final int _tmpSpotifyPlayCount;
+            _tmpSpotifyPlayCount = _cursor.getInt(_cursorIndexOfSpotifyPlayCount);
+            final long _tmpYoutubeListenTimeMs;
+            _tmpYoutubeListenTimeMs = _cursor.getLong(_cursorIndexOfYoutubeListenTimeMs);
+            final long _tmpSpotifyListenTimeMs;
+            _tmpSpotifyListenTimeMs = _cursor.getLong(_cursorIndexOfSpotifyListenTimeMs);
+            final boolean _tmpIsWhitelisted;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsWhitelisted);
+            _tmpIsWhitelisted = _tmp != 0;
+            final boolean _tmpIsBlacklisted;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsBlacklisted);
+            _tmpIsBlacklisted = _tmp_1 != 0;
+            final float _tmpAffectionScore;
+            _tmpAffectionScore = _cursor.getFloat(_cursorIndexOfAffectionScore);
+            _item = new Song(_tmpId,_tmpTitle,_tmpArtist,_tmpPlatform,_tmpPlayCount,_tmpSkipCount,_tmpQuickSkipCount,_tmpLoopsAvoided,_tmpFirstPlayedAt,_tmpLastPlayedAt,_tmpTotalListenTimeMs,_tmpYoutubePlayCount,_tmpSpotifyPlayCount,_tmpYoutubeListenTimeMs,_tmpSpotifyListenTimeMs,_tmpIsWhitelisted,_tmpIsBlacklisted,_tmpAffectionScore);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Object getDailyStats(final String date,
       final Continuation<? super DailyStats> $completion) {
     final String _sql = "SELECT * FROM daily_stats WHERE date = ?";
@@ -1923,6 +2405,73 @@ public final class SongDao_Impl implements SongDao {
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
     _statement.bindLong(_argIndex, limit);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<SkipHistoryEntry>>() {
+      @Override
+      @NonNull
+      public List<SkipHistoryEntry> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfSongId = CursorUtil.getColumnIndexOrThrow(_cursor, "songId");
+          final int _cursorIndexOfSongTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "songTitle");
+          final int _cursorIndexOfSongArtist = CursorUtil.getColumnIndexOrThrow(_cursor, "songArtist");
+          final int _cursorIndexOfPlatform = CursorUtil.getColumnIndexOrThrow(_cursor, "platform");
+          final int _cursorIndexOfReason = CursorUtil.getColumnIndexOrThrow(_cursor, "reason");
+          final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
+          final List<SkipHistoryEntry> _result = new ArrayList<SkipHistoryEntry>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final SkipHistoryEntry _item;
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final String _tmpSongId;
+            if (_cursor.isNull(_cursorIndexOfSongId)) {
+              _tmpSongId = null;
+            } else {
+              _tmpSongId = _cursor.getString(_cursorIndexOfSongId);
+            }
+            final String _tmpSongTitle;
+            if (_cursor.isNull(_cursorIndexOfSongTitle)) {
+              _tmpSongTitle = null;
+            } else {
+              _tmpSongTitle = _cursor.getString(_cursorIndexOfSongTitle);
+            }
+            final String _tmpSongArtist;
+            if (_cursor.isNull(_cursorIndexOfSongArtist)) {
+              _tmpSongArtist = null;
+            } else {
+              _tmpSongArtist = _cursor.getString(_cursorIndexOfSongArtist);
+            }
+            final String _tmpPlatform;
+            if (_cursor.isNull(_cursorIndexOfPlatform)) {
+              _tmpPlatform = null;
+            } else {
+              _tmpPlatform = _cursor.getString(_cursorIndexOfPlatform);
+            }
+            final String _tmpReason;
+            if (_cursor.isNull(_cursorIndexOfReason)) {
+              _tmpReason = null;
+            } else {
+              _tmpReason = _cursor.getString(_cursorIndexOfReason);
+            }
+            final long _tmpTimestamp;
+            _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
+            _item = new SkipHistoryEntry(_tmpId,_tmpSongId,_tmpSongTitle,_tmpSongArtist,_tmpPlatform,_tmpReason,_tmpTimestamp);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object getAllSkipHistory(final Continuation<? super List<SkipHistoryEntry>> $completion) {
+    final String _sql = "SELECT * FROM skip_history";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
     final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
     return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<List<SkipHistoryEntry>>() {
       @Override

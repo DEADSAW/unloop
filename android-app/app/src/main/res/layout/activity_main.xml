@@ -13,39 +13,55 @@
         android:padding="20dp">
 
         <!-- Premium Header -->
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
             android:paddingTop="24dp"
             android:paddingBottom="32dp">
 
-            <!-- Gradient Logo -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="∞"
-                android:textSize="56sp"
-                android:textColor="@color/primary" />
+            <!-- Settings Button -->
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|top"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_settings"
+                android:contentDescription="Settings"
+                app:tint="@color/on_surface_secondary" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Unloop"
-                android:textColor="@color/on_surface"
-                android:textSize="32sp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.05" />
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Never repeat. Always discover."
-                android:textColor="@color/on_surface_secondary"
-                android:textSize="14sp"
-                android:layout_marginTop="4dp" />
-        </LinearLayout>
+                <!-- Gradient Logo -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="∞"
+                    android:textSize="56sp"
+                    android:textColor="@color/primary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Unloop"
+                    android:textColor="@color/on_surface"
+                    android:textSize="32sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.05" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Never repeat. Always discover."
+                    android:textColor="@color/on_surface_secondary"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </FrameLayout>
 
         <!-- Main Toggle Card with Glow -->
         <FrameLayout
@@ -308,7 +324,7 @@
                     android:id="@+id/btnGrantAccessibility"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="Enable"
+                    android:text="@string/btn_enable"
                     android:textSize="12sp"
                     app:backgroundTint="@color/primary"
                     app:cornerRadius="18dp" />
@@ -358,7 +374,58 @@
                     android:id="@+id/btnGrantNotification"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="Enable"
+                    android:text="@string/btn_enable"
+                    android:textSize="12sp"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="18dp" />
+            </LinearLayout>
+
+            <!-- Battery Optimization Permission -->
+            <LinearLayout
+                android:id="@+id/cardBatteryPermission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_glass"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚡"
+                    android:textSize="20sp"
+                    android:layout_marginEnd="12dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/perm_battery_title"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/perm_battery_desc"
+                        android:textColor="@color/on_surface_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGrantBattery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/btn_enable"
                     android:textSize="12sp"
                     app:backgroundTint="@color/primary"
                     app:cornerRadius="18dp" />
@@ -390,7 +457,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="📤 Export"
+                android:text="📊 Analytics"
                 android:textSize="13sp"
                 android:textColor="@color/on_surface"
                 android:background="@drawable/card_glass"

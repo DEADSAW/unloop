@@ -41,7 +41,10 @@
     <string name="action_export">Export History</string>
     <string name="action_whitelist">Whitelist</string>
     <string name="app_name">Unloop</string>
+    <string name="btn_backup">Backup Data</string>
+    <string name="btn_enable">Enable</string>
     <string name="btn_grant_permission">Grant Permission</string>
+    <string name="btn_restore">Restore Data</string>
     <string name="mode_artist_smart">Artist Smart</string>
     <string name="mode_artist_smart_desc">Limit same artist in a row</string>
     <string name="mode_memory_fade">Memory Fade</string>
@@ -52,8 +55,16 @@
     <string name="mode_smart_auto_desc">AI learns your taste automatically</string>
     <string name="mode_strict">Strict</string>
     <string name="mode_strict_desc">Never play the same song again</string>
+    <string name="msg_backing_up">Backing up...</string>
+    <string name="msg_backup_fail">Backup failed</string>
+    <string name="msg_backup_success">Backup saved!</string>
+    <string name="msg_restore_fail">Restore failed</string>
+    <string name="msg_restore_success">Restore complete!</string>
+    <string name="msg_restoring">Restoring...</string>
     <string name="no_music_playing">No music detected</string>
     <string name="now_playing">Now Playing</string>
+    <string name="perm_battery_desc">Prevent auto-kill in background</string>
+    <string name="perm_battery_title">Unrestricted Battery</string>
     <string name="permission_accessibility_desc">Required to automatically skip repeated songs</string>
     <string name="permission_accessibility_title">Accessibility Service</string>
     <string name="permission_notification_desc">Required to detect which song is currently playing</string>
@@ -68,6 +79,10 @@
     <string name="toast_skipped">Skipped — already heard this</string>
     <string name="toggle_disabled">Discovery Mode Paused</string>
     <string name="toggle_enabled">Discovery Mode Active</string>
+    <string name="widget_current_session">Current Session</string>
+    <string name="widget_loops_avoided">Loops Avoided</string>
+    <string name="widget_title">Unloop Stats</string>
+    <string name="widget_total_time">Total Listen Time: %s</string>
     <style name="Theme.Unloop" parent="Theme.Material3.DayNight.NoActionBar">
         
         <item name="colorPrimary">@color/primary</item>

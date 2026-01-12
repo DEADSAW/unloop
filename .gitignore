@@ -1,0 +1,29 @@
+# Android
+android-app/.gradle/
+android-app/app/build/
+android-app/build/
+android-app/local.properties
+android-app/.idea/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Desktop
+desktop-app/node_modules/
+desktop-app/dist/
+desktop-app/.env
+
+# Build logs
+*.log
+build*.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+*.swp
+*.swo

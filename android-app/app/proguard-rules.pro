@@ -30,3 +30,6 @@
 # Coroutines
 -keepclassmembers class kotlinx.coroutines.** { *; }
 -keepclassmembernames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+
+# MPAndroidChart
+-keep class com.github.mikephil.charting.** { *; }

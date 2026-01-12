@@ -49,4 +49,25 @@
     <string name="action_blacklist">Blacklist</string>
     <string name="action_export">Export History</string>
     <string name="action_clear">Clear History</string>
+    
+    <!-- Backup/Restore -->
+    <string name="btn_backup">Backup Data</string>
+    <string name="btn_restore">Restore Data</string>
+    <string name="msg_backing_up">Backing up...</string>
+    <string name="msg_backup_success">Backup saved!</string>
+    <string name="msg_backup_fail">Backup failed</string>
+    <string name="msg_restoring">Restoring...</string>
+    <string name="msg_restore_success">Restore complete!</string>
+    <string name="msg_restore_fail">Restore failed</string>
+    
+    <!-- Widget -->
+    <string name="widget_title">Unloop Stats</string>
+    <string name="widget_total_time">Total Listen Time: %s</string>
+    <string name="widget_current_session">Current Session</string>
+    <string name="widget_loops_avoided">Loops Avoided</string>
+    
+    <!-- Battery -->
+    <string name="perm_battery_title">Unrestricted Battery</string>
+    <string name="perm_battery_desc">Prevent auto-kill in background</string>
+    <string name="btn_enable">Enable</string>
 </resources>

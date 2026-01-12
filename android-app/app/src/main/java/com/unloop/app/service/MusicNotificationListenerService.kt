@@ -46,7 +46,7 @@ class MusicNotificationListenerService : NotificationListenerService() {
     
     private var currentSongId: String? = null
     private var lastBroadcastTime: Long = 0
-    private val statsRepository by lazy { StatsRepository(this) }
+    private val statsRepository by lazy { StatsRepository.getInstance(this) }
     
     override fun onCreate() {
         super.onCreate()

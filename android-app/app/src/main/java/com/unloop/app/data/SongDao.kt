@@ -12,6 +12,15 @@ interface SongDao {
     
     @Query("SELECT * FROM songs WHERE id = :songId")
     suspend fun getSongById(songId: String): Song?
+
+    @Query("SELECT * FROM songs WHERE title LIKE '%' || :query || '%' OR artist LIKE '%' || :query || '%' ORDER BY lastPlayedAt DESC")
+    fun searchSongs(query: String): Flow<List<Song>>
+
+    @Query("SELECT * FROM songs WHERE (title LIKE '%' || :query || '%' OR artist LIKE '%' || :query || '%') AND isWhitelisted = 1 ORDER BY lastPlayedAt DESC")
+    fun searchWhitelistedSongs(query: String): Flow<List<Song>>
+
+    @Query("SELECT * FROM songs WHERE (title LIKE '%' || :query || '%' OR artist LIKE '%' || :query || '%') AND isBlacklisted = 1 ORDER BY lastPlayedAt DESC")
+    fun searchBlacklistedSongs(query: String): Flow<List<Song>>
     
     @Query("SELECT * FROM songs ORDER BY lastPlayedAt DESC LIMIT :limit")
     suspend fun getRecentSongs(limit: Int): List<Song>
@@ -97,6 +106,12 @@ interface SongDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSong(song: Song)
     
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSongs(songs: List<Song>)
+    
+    @Query("SELECT * FROM songs")
+    suspend fun getAllSongsList(): List<Song>
+    
     @Update
     suspend fun updateSong(song: Song)
     
@@ -126,11 +141,17 @@ interface SongDao {
     fun getRecentDailyStatsFlow(days: Int): Flow<List<DailyStats>>
     
     // Skip history
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSkipHistory(entry: SkipHistoryEntry)
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSkipHistoryList(entries: List<SkipHistoryEntry>)
     
     @Query("SELECT * FROM skip_history ORDER BY timestamp DESC LIMIT :limit")
     suspend fun getRecentSkipHistory(limit: Int): List<SkipHistoryEntry>
+
+    @Query("SELECT * FROM skip_history")
+    suspend fun getAllSkipHistory(): List<SkipHistoryEntry>
     
     @Query("SELECT * FROM skip_history ORDER BY timestamp DESC LIMIT :limit")
     fun getRecentSkipHistoryFlow(limit: Int): Flow<List<SkipHistoryEntry>>
